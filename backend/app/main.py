@@ -6,4 +6,4 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    return {"database_url": settings.test}
+    return {"database_url": settings.database_url}
