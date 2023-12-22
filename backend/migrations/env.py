@@ -10,7 +10,11 @@ from alembic import context
 
 from app.core.config import settings
 
-from app.core.temp_db_models import *
+from app.courses.models import *
+from app.points.models import *
+from app.steps.models import *
+from app.submissions.models import *
+from app.users.models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
