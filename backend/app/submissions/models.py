@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
+from pydantic import UUID4
 
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -10,9 +11,9 @@ if TYPE_CHECKING:
 
 
 class Submission(SQLModel, table=True):
-    submission_id: int | None = Field(default=None, primary_key=True)
-    student_id: int = Field(foreign_key="user.user_id")
-    step_id: int = Field(foreign_key="step.step_id")
+    id: int | None = Field(default=None, primary_key=True)
+    student_id: UUID4 = Field(foreign_key="user.id")
+    step_id: int = Field(foreign_key="step.id")
     submitted_answer: str
     is_correct: bool
     points_awarded: int

@@ -7,10 +7,7 @@ from app.core.config import settings
 
 TEST = settings.test
 
-if TEST:
-    DATABASE_URL = settings.database_url
-else:
-    DATABASE_URL = settings.database_url
+DATABASE_URL = settings.test_database_url if TEST else settings.database_url
 
 engine = create_async_engine(DATABASE_URL, echo=False, future=True)
 

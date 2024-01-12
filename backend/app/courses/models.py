@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
+from pydantic import UUID4
 
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -10,8 +11,8 @@ if TYPE_CHECKING:
 
 
 class Course(SQLModel, table=True):
-    course_id: int | None = Field(default=None, primary_key=True)
-    author_id: int = Field(foreign_key="user.user_id")
+    id: int | None = Field(default=None, primary_key=True)
+    author_id: UUID4 = Field(foreign_key="user.id")
     title: str
     programming_language: str
     description: str
@@ -24,8 +25,8 @@ class Course(SQLModel, table=True):
 
 
 class Topic(SQLModel, table=True):
-    topic_id: int | None = Field(default=None, primary_key=True)
-    course_id: int = Field(foreign_key="course.course_id")
+    id: int | None = Field(default=None, primary_key=True)
+    course_id: int = Field(foreign_key="course.id")
     title: str
     description: str
     order: int
@@ -35,8 +36,8 @@ class Topic(SQLModel, table=True):
 
 
 class Lesson(SQLModel, table=True):
-    lesson_id: int | None = Field(default=None, primary_key=True)
-    topic_id: int = Field(foreign_key="topic.topic_id")
+    id: int | None = Field(default=None, primary_key=True)
+    topic_id: int = Field(foreign_key="topic.id")
     title: str
     description: str
     order: int

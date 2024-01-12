@@ -21,8 +21,8 @@ class TestType(Enum):
 
 
 class Step(SQLModel, table=True):
-    step_id: int | None = Field(default=None, primary_key=True)
-    lesson_id: int = Field(foreign_key="lesson.lesson_id")
+    id: int | None = Field(default=None, primary_key=True)
+    lesson_id: int = Field(foreign_key="lesson.id")
     order: int
     step_kind: StepKind
 
@@ -34,16 +34,16 @@ class Step(SQLModel, table=True):
 
 
 class Theory(SQLModel, table=True):
-    theory_id: int | None = Field(default=None, primary_key=True)
-    step_id: int = Field(foreign_key="step.step_id")
+    id: int | None = Field(default=None, primary_key=True)
+    step_id: int = Field(foreign_key="step.id")
     content: str
 
     step: Step = Relationship(back_populates="theories")
 
 
 class CodingTask(SQLModel, table=True):
-    coding_task_id: int | None = Field(default=None, primary_key=True)
-    step_id: int = Field(foreign_key="step.step_id")
+    id: int | None = Field(default=None, primary_key=True)
+    step_id: int = Field(foreign_key="step.id")
     instructions: str
     starter_code: str
     solution_code: str
@@ -56,8 +56,8 @@ class CodingTask(SQLModel, table=True):
 
 
 class Test(SQLModel, table=True):
-    test_id: int | None = Field(default=None, primary_key=True)
-    step_id: int = Field(foreign_key="step.step_id")
+    id: int | None = Field(default=None, primary_key=True)
+    step_id: int = Field(foreign_key="step.id")
     question: str
     points: int
 
@@ -66,8 +66,8 @@ class Test(SQLModel, table=True):
 
 
 class TestChoice(SQLModel, table=True):
-    test_choice_id: int | None = Field(default=None, primary_key=True)
-    test_id: int = Field(foreign_key="test.test_id")
+    id: int | None = Field(default=None, primary_key=True)
+    test_id: int = Field(foreign_key="test.id")
     choice_text: str
     is_correct: bool
 

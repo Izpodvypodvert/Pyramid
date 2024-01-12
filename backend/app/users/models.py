@@ -1,7 +1,10 @@
+import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
+from pydantic import UUID4, EmailStr
 
-from sqlmodel import SQLModel, Field, Relationship
+from fastapi_users_db_sqlmodel import SQLModelBaseUserDB
+from sqlmodel import SQLModel, Field, Relationship, AutoString
 
 
 if TYPE_CHECKING:
@@ -11,12 +14,29 @@ if TYPE_CHECKING:
 
 
 class User(SQLModel, table=True):
-    user_id: int | None = Field(default=None, primary_key=True)
+    __tablename__ = "user"
+
+    id: UUID4 = Field(default_factory=uuid.uuid4, primary_key=True, nullable=False)
     username: str
-    email: str
-    password_hash: str
     is_author: bool
     created_at: datetime
+
+    if TYPE_CHECKING:  # pragma: no cover
+        email: str
+    else:
+        email: EmailStr = Field(
+            sa_type=AutoString,
+            sa_column_kwargs={"unique": True, "index": True},
+            nullable=False,
+        )
+    hashed_password: str
+
+    is_active: bool = Field(True, nullable=False)
+    is_superuser: bool = Field(False, nullable=False)
+    is_verified: bool = Field(False, nullable=False)
+
+    class Config:
+        orm_mode = True
 
     courses: list["Course"] = Relationship(back_populates="author")
     submissions: list["Submission"] = Relationship(back_populates="student")
@@ -25,9 +45,9 @@ class User(SQLModel, table=True):
 
 
 class StudentCourse(SQLModel, table=True):
-    student_course_id: int | None = Field(default=None, primary_key=True)
-    student_id: int = Field(foreign_key="user.user_id")
-    course_id: int = Field(foreign_key="course.course_id")
+    id: int | None = Field(default=None, primary_key=True)
+    student_id: UUID4 = Field(foreign_key="user.id")
+    course_id: int = Field(foreign_key="course.id")
     points_accumulated: int
     is_completed: bool
     completed_at: datetime
@@ -37,9 +57,9 @@ class StudentCourse(SQLModel, table=True):
 
 
 class Favorite(SQLModel, table=True):
-    favorite_id: int | None = Field(default=True, primary_key=True)
-    student_id: int = Field(foreign_key="user.user_id")
-    course_id: int = Field(foreign_key="course.course_id")
+    id: int | None = Field(default=True, primary_key=True)
+    student_id: UUID4 = Field(foreign_key="user.id")
+    course_id: int = Field(foreign_key="course.id")
     created_at: datetime
 
     student: User = Relationship(back_populates="favorites")

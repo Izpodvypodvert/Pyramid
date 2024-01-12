@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     postgres_test_db: str = ""
     test_database_url: str = ""
 
+    secret: str = ""
+
     class Config:
         env_file = "../.env"
 
