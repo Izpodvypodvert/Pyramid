@@ -29,21 +29,26 @@ def setup_logger(name, log_file, level=logging.INFO):
     return logger
 
 
+services_logger = setup_logger("services_logger", "services_logger.log")
+
 utils_repository_logger = setup_logger(
     "utils_repository_logger", "utils_repository_logger.log"
 )
 
 
-def db_query_logger(func):
-    @functools.wraps(func)
-    async def wrapper(*args, **kwargs):
-        utils_repository_logger.info("The database query begins to generate")
-        try:
-            result = await func(*args, **kwargs)
-            utils_repository_logger.info("Database query successfully completed")
-            return result
-        except Exception as e:
-            utils_repository_logger.error(f"Database query failed: {e}")
-            raise
+def db_query_logger(logger=utils_repository_logger):
+    def decorator(func):
+        @functools.wraps(func)
+        async def wrapper(*args, **kwargs):
+            logger.info("The database query begins to generate")
+            try:
+                result = await func(*args, **kwargs)
+                logger.info("Database query successfully completed")
+                return result
+            except Exception as e:
+                logger.error(f"Database query failed: {e}")
+                raise
 
-    return wrapper
+        return wrapper
+
+    return decorator

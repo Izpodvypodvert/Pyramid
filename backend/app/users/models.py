@@ -35,13 +35,13 @@ class User(SQLModel, table=True):
     is_superuser: bool = Field(False, nullable=False)
     is_verified: bool = Field(False, nullable=False)
 
-    class Config:
-        orm_mode = True
-
     courses: list["Course"] = Relationship(back_populates="author")
     submissions: list["Submission"] = Relationship(back_populates="student")
     student_courses: list["StudentCourse"] = Relationship(back_populates="student")
     favorites: list["Favorite"] = Relationship(back_populates="student")
+
+    class Config:
+        orm_mode = True
 
 
 class StudentCourse(SQLModel, table=True):
