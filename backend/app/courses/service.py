@@ -1,10 +1,10 @@
-from backend.app.courses.exceptions import (
+from app.courses.exceptions import (
     IncorrectCourseIdException,
     UnauthorizedAccessCourseException,
 )
-from backend.app.courses.models import Course
-from backend.app.utils.transaction_manager import ITransactionManager
-from backend.app.utils.logger import services_logger
+from app.courses.models import Course
+from app.utils.transaction_manager import ITransactionManager
+from app.utils.logger import services_logger
 
 
 class CoursesService:
@@ -21,16 +21,13 @@ class CoursesService:
     async def _get_course(
         transaction_manager: ITransactionManager,
         course_id: int,
-        user_id: int,
     ) -> Course:
-        course = await transaction_manager.courses.find_one_or_none(
-            id=course_id, user_id=user_id
-        )
+        course = await transaction_manager.courses.find_one_or_none(id=course_id)
 
         if not course:
             services_logger.warning(
-                "Incorrect course id or user_id",
-                extra={"user_id": user_id, "course_id": course_id},
+                "Incorrect course id",
+                extra={"course_id": course_id},
             )
             raise IncorrectCourseIdException
 
@@ -40,12 +37,9 @@ class CoursesService:
     async def get_course(
         transaction_manager: ITransactionManager,
         course_id: int,
-        user_id: int,
     ) -> Course | None:
         async with transaction_manager:
-            course = await CoursesService._get_course(
-                transaction_manager, course_id, user_id
-            )
+            course = await CoursesService._get_course(transaction_manager, course_id)
 
             await transaction_manager.commit()
             return course
@@ -83,12 +77,10 @@ class CoursesService:
             return deleted_course
 
     @staticmethod
-    async def add_course(
-        transaction_manager: ITransactionManager, course_id: int, user_id: int
+    async def create_course(
+        transaction_manager: ITransactionManager, user_id: int
     ) -> Course:
         async with transaction_manager:
-            course = await transaction_manager.courses.insert_data(
-                id=course_id, user_id=user_id
-            )
+            course = await transaction_manager.courses.insert_data(user_id=user_id)
             await transaction_manager.commit()
             return course

@@ -43,7 +43,7 @@ class SQLModelRepository(AbstractRepository):
         result = await self.session.exec(statement)
         return result.first()
 
-    @db_query_logger
+    # @db_query_logger
     async def find_all(self, **filter_by):
         statement = select(self.model).filter_by(**filter_by)
         result = await self.session.exec(statement)

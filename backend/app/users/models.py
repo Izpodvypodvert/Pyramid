@@ -6,7 +6,6 @@ from pydantic import UUID4, EmailStr
 from fastapi_users_db_sqlmodel import SQLModelBaseUserDB
 from sqlmodel import SQLModel, Field, Relationship, AutoString
 
-
 if TYPE_CHECKING:
     from app.courses.models import Course
     from app.users.models import User

@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
-from backend.app.core.db import get_async_session
+from typing import Annotated
 
-from backend.app.courses.repository import CoursesRepository
+from fastapi import Depends
+from app.core.db import AsyncSessionLocal as async_session_maker
+
+from app.courses.repository import CoursesRepository
 
 
 class ITransactionManager(ABC):
@@ -35,14 +38,18 @@ class TransactionManager(ITransactionManager):
     """Implementation of the interface for working with transactions"""
 
     def __init__(self):
-        self.session_factory = get_async_session
+        self.session_factory = async_session_maker
 
     async def __aenter__(self):
         self.session = self.session_factory()
         self.courses = CoursesRepository(self.session)
+        return self
 
-    async def __aexit__(self, *args):
-        await self.session.rollback()
+    async def __aexit__(self, exc_type, exc, tb):
+        if exc is None:
+            await self.session.commit()
+        else:
+            await self.session.rollback()
         await self.session.close()
 
     async def commit(self):
@@ -50,3 +57,7 @@ class TransactionManager(ITransactionManager):
 
     async def rollback(self):
         await self.session.rollback()
+
+
+# return a Unit of work instance for working with Session
+TManagerDep = Annotated[ITransactionManager, Depends(TransactionManager)]
