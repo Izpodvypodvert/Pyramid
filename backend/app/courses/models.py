@@ -4,10 +4,10 @@ from pydantic import UUID4
 
 from sqlmodel import SQLModel, Field, Relationship
 
+from app.steps.models import Step
 
 if TYPE_CHECKING:
     from app.users.models import User, StudentCourse, Favorite
-    from app.steps.models import Step
 
 
 class Course(SQLModel, table=True):
@@ -22,6 +22,7 @@ class Course(SQLModel, table=True):
     author: "User" = Relationship(back_populates="courses")
     student_courses: list["StudentCourse"] = Relationship(back_populates="course")
     favorites: list["Favorite"] = Relationship(back_populates="course")
+    topics: list["Topic"] = Relationship(back_populates="course")
 
 
 class Topic(SQLModel, table=True):

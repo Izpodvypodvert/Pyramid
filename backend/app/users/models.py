@@ -3,13 +3,10 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from pydantic import UUID4, EmailStr
 
-from fastapi_users_db_sqlmodel import SQLModelBaseUserDB
 from sqlmodel import SQLModel, Field, Relationship, AutoString
 
-if TYPE_CHECKING:
-    from app.courses.models import Course
-    from app.users.models import User
-    from app.submissions.models import Submission
+from app.courses.models import Course
+from app.submissions.models import Submission
 
 
 class User(SQLModel, table=True):
@@ -17,8 +14,8 @@ class User(SQLModel, table=True):
 
     id: UUID4 = Field(default_factory=uuid.uuid4, primary_key=True, nullable=False)
     username: str
-    is_author: bool
-    created_at: datetime
+    is_author: bool = False
+    created_at: datetime = Field(default_factory=datetime.now)
 
     if TYPE_CHECKING:  # pragma: no cover
         email: str

@@ -6,10 +6,14 @@ class UserRead(schemas.BaseUser[UUID4]):
     """Schema with basic user model fields (except password):
     id, email address, is_active, is_superuser, is_verified."""
 
+    username: str
+
 
 class UserCreate(schemas.BaseUserCreate):
     """Scheme for creating a user. Email and password must be transmitted.
     Any other fields passed in the user creation request will be ignored."""
+
+    username: str
 
 
 class UserUpdate(schemas.BaseUserUpdate):
@@ -17,3 +21,5 @@ class UserUpdate(schemas.BaseUserUpdate):
     All fields are optional. If the request is sent by a regular user (and not a superuser), then the is_active, is_superuser fields,
     is_verified is excluded from the dataset: these three fields can only be changed by the superuser.
     """
+
+    username: str | None = None
