@@ -14,7 +14,7 @@ class CoursesService:
     ) -> list[Course] | None:
         async with transaction_manager:
             courses = await transaction_manager.courses.find_all()
-            await transaction_manager.commit()
+
             return courses
 
     @staticmethod
@@ -41,7 +41,6 @@ class CoursesService:
         async with transaction_manager:
             course = await CoursesService._get_course(transaction_manager, course_id)
 
-            await transaction_manager.commit()
             return course
 
     @staticmethod
@@ -49,13 +48,13 @@ class CoursesService:
         transaction_manager: ITransactionManager,
         course_id: int,
         user_id: int,
-    ) -> Course:
+    ) -> int:
         async with transaction_manager:
             course_to_delete = await CoursesService._get_course(
-                transaction_manager, course_id, user_id
+                transaction_manager, course_id
             )
 
-            if course_to_delete.author != user_id:
+            if course_to_delete.author_id != user_id:
                 services_logger.warning(
                     "Attempted to delete a course with incorrect user_id",
                     extra={"user_id": user_id, "course_id": course_id},
@@ -63,7 +62,7 @@ class CoursesService:
                 raise UnauthorizedAccessCourseException
 
             deleted_course = await transaction_manager.courses.delete(
-                id=course_id, user_id=user_id
+                id=course_id, author_id=user_id
             )
 
             if not deleted_course:
@@ -73,14 +72,14 @@ class CoursesService:
                 )
                 raise IncorrectCourseIdException
 
-            await transaction_manager.commit()
             return deleted_course
 
     @staticmethod
     async def create_course(
-        transaction_manager: ITransactionManager, user_id: int
+        course: Course, transaction_manager: ITransactionManager, user_id: int
     ) -> Course:
         async with transaction_manager:
-            course = await transaction_manager.courses.insert_data(user_id=user_id)
-            await transaction_manager.commit()
+            course = await transaction_manager.courses.insert_data(
+                **course.model_dump(), user_id=user_id
+            )
             return course

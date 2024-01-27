@@ -29,7 +29,9 @@ def setup_logger(name, log_file, level=logging.INFO):
     return logger
 
 
-services_logger = setup_logger("services_logger", "services_logger.log")
+services_logger = setup_logger(
+    "services_logger", "services_logger.log", level=logging.WARNING
+)
 
 utils_repository_logger = setup_logger(
     "utils_repository_logger", "utils_repository_logger.log"
@@ -40,6 +42,7 @@ def db_query_logger(logger=utils_repository_logger):
     def decorator(func):
         @functools.wraps(func)
         async def wrapper(*args, **kwargs):
+            logger = utils_repository_logger
             logger.info("The database query begins to generate")
             try:
                 result = await func(*args, **kwargs)

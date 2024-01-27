@@ -16,8 +16,8 @@ class Course(SQLModel, table=True):
     title: str
     programming_language: str
     description: str
-    is_published: bool
-    created_at: datetime
+    is_published: bool = False
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
     author: "User" = Relationship(back_populates="courses")
     student_courses: list["StudentCourse"] = Relationship(back_populates="course")
