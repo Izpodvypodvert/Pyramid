@@ -34,15 +34,21 @@ class ITransactionManager(ABC):
         ...
 
 
+class RepositoryFactory:
+    def create_courses_repository(self, session):
+        return CoursesRepository(session)
+
+
 class TransactionManager(ITransactionManager):
     """Implementation of the interface for working with transactions"""
 
-    def __init__(self):
-        self.session_factory = async_session_maker
+    def __init__(self, session_factory, repository_factory):
+        self.session_factory = session_factory
+        self.repository_factory = repository_factory
 
     async def __aenter__(self):
         self.session = self.session_factory()
-        self.courses = CoursesRepository(self.session)
+        self.courses = self.repository_factory.create_courses_repository(self.session)
         return self
 
     async def __aexit__(self, exc_type, exc, tb):
@@ -59,5 +65,15 @@ class TransactionManager(ITransactionManager):
         await self.session.rollback()
 
 
+def get_transaction_manager(session_factory, repository_factory) -> ITransactionManager:
+    return TransactionManager(session_factory, repository_factory)
+
+
+session_factory = async_session_maker
+repository_factory = RepositoryFactory()
+
 # return a Unit of work instance for working with Session
-TManagerDep = Annotated[ITransactionManager, Depends(TransactionManager)]
+TManagerDep = Annotated[
+    ITransactionManager,
+    Depends(lambda: get_transaction_manager(session_factory, repository_factory)),
+]
