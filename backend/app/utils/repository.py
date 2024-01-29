@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from sqlmodel import SQLModel, Session, select, update, delete
-
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.utils.logger import db_query_logger
 
@@ -34,7 +34,7 @@ class AbstractRepository(ABC):
 class SQLModelRepository(AbstractRepository):
     model: type[SQLModel] = None
 
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
     @db_query_logger()

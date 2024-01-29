@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.courses.models import Course
-from app.courses.service import CoursesService
 from app.utils.exceptions import OpenAPIDocExtraResponse
-from app.utils.transaction_manager import TManagerDep
+
 from app.users.models import User
 from app.users.dependencies import current_user
+from app.courses.dependencies import CoursesServiceDep
 
 
 router = APIRouter(prefix="/courses", tags=["courses"])
@@ -18,10 +17,10 @@ router = APIRouter(prefix="/courses", tags=["courses"])
     responses={401: {"model": OpenAPIDocExtraResponse}},
 )
 async def get_courses(
-    transaction_manager: TManagerDep,
+    course_service: CoursesServiceDep,
 ):
     """Returns all curses"""
-    courses = await CoursesService.get_courses(transaction_manager=transaction_manager)
+    courses = await course_service.get_all()
     return courses
 
 
@@ -35,12 +34,10 @@ async def get_courses(
 )
 async def get_course(
     course_id: int,
-    transaction_manager: TManagerDep,
+    course_service: CoursesServiceDep,
 ):
     """Returns specific course by id"""
-    course = await CoursesService.get_course(
-        transaction_manager=transaction_manager, course_id=course_id
-    )
+    course = await course_service.get_by_id(course_id)
     return course
 
 
@@ -53,11 +50,13 @@ async def get_course(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_course(
-    course_id: int, transaction_manager: TManagerDep, user: User = Depends(current_user)
+    course_id: int,
+    course_service: CoursesServiceDep,
+    user: User = Depends(current_user),
 ):
     """Deletes specific course of the author by id"""
-    deleted_count = await CoursesService.delete_course(
-        transaction_manager=transaction_manager, course_id=course_id, user_id=user.id
+    deleted_count = await course_service.delete(
+        course_id=course_id, user_id=user.id, is_admin=user.is_superuser
     )
     if deleted_count == 0:
         raise HTTPException(
@@ -75,10 +74,30 @@ async def delete_course(
     },
 )
 async def create_course(
-    course: Course, transaction_manager: TManagerDep, user: User = Depends(current_user)
+    course: Course,
+    course_service: CoursesServiceDep,
+    user: User = Depends(current_user),
 ):
     """Creates  course"""
-    new_course = await CoursesService.create_course(
-        course, transaction_manager=transaction_manager, user_id=user.id
-    )
+    new_course = await course_service.create(course)
     return new_course
+
+
+@router.put(
+    "/{course_id}",
+    responses={
+        400: {"model": OpenAPIDocExtraResponse},
+        401: {"model": OpenAPIDocExtraResponse},
+        404: {"model": OpenAPIDocExtraResponse},
+    },
+)
+async def update_course(
+    course: Course,
+    course_service: CoursesServiceDep,
+    user: User = Depends(current_user),
+):
+    """Update course"""
+    await course_service.update(
+        course=course, user_id=user.id, is_admin=user.is_superuser
+    )
+    return {"message": f"Course has been successfully updated"}
