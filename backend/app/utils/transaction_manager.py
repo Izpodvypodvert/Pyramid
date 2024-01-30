@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Depends
 from app.core.db import AsyncSessionLocal as async_session_maker
 
-from app.courses.repository import CoursesRepository
+from app.courses.repository import CoursesRepository, LessonRepository, TopicsRepository
 
 
 class ITransactionManager(ABC):
@@ -43,6 +43,8 @@ class TransactionManager(ITransactionManager):
     async def __aenter__(self):
         self.session = self.session_factory()
         self.courses = CoursesRepository(self.session)
+        self.topics = TopicsRepository(self.session)
+        self.lessons = LessonRepository(self.session)
         return self
 
     async def __aexit__(self, exc_type, exc, tb):

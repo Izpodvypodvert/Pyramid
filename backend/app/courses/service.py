@@ -12,9 +12,44 @@ class CoursesService(AuthorshipMixin, BaseService[Course]):
         return await super().delete(course_id)
 
     async def update(
-        self, course: Course, user_id: UUID4, is_admin: bool = False
+        self, course_id: int, course: Course, user_id: UUID4, is_admin: bool = False
     ) -> int:
-        await self._check_user_is_author_or_admin(course.id, user_id, is_admin)
-        updated_data = course.model_dump()
-        updated_data.pop("id", None)
-        return await super().update(course.id, **updated_data)
+        await self._check_user_is_author_or_admin(course_id, user_id, is_admin)
+        updated_data = course.model_dump(exclude_unset=True)
+        if not is_admin:
+            updated_data.pop("is_published", None)
+        return await super().update(course_id, **updated_data)
+
+
+class TopicsService(AuthorshipMixin, BaseService[Course]):
+    async def delete(
+        self, topic_id: int, user_id: UUID4, is_admin: bool = False
+    ) -> int:
+        await self._check_user_is_author_or_admin(topic_id, user_id, is_admin)
+        return await super().delete(topic_id)
+
+    async def update(
+        self, topic_id: int, course: Course, user_id: UUID4, is_admin: bool = False
+    ) -> int:
+        await self._check_user_is_author_or_admin(topic_id, user_id, is_admin)
+        updated_data = course.model_dump(exclude_unset=True)
+        if not is_admin:
+            updated_data.pop("is_published", None)
+        return await super().update(topic_id, **updated_data)
+
+
+class LessonsService(AuthorshipMixin, BaseService[Course]):
+    async def delete(
+        self, lesson_id: int, user_id: UUID4, is_admin: bool = False
+    ) -> int:
+        await self._check_user_is_author_or_admin(lesson_id, user_id, is_admin)
+        return await super().delete(lesson_id)
+
+    async def update(
+        self, lesson_id: int, course: Course, user_id: UUID4, is_admin: bool = False
+    ) -> int:
+        await self._check_user_is_author_or_admin(lesson_id, user_id, is_admin)
+        updated_data = course.model_dump(exclude_unset=True)
+        if not is_admin:
+            updated_data.pop("is_published", None)
+        return await super().update(lesson_id, **updated_data)

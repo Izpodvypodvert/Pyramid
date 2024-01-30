@@ -6,6 +6,7 @@ from app.utils.exceptions import OpenAPIDocExtraResponse
 from app.users.models import User
 from app.users.dependencies import current_user
 from app.courses.dependencies import CoursesServiceDep
+from app.courses.schemas import CourseCreate, CourseUpdate
 
 
 router = APIRouter(prefix="/courses", tags=["courses"])
@@ -14,7 +15,6 @@ router = APIRouter(prefix="/courses", tags=["courses"])
 @router.get(
     "/",
     response_model=list[Course],
-    responses={401: {"model": OpenAPIDocExtraResponse}},
 )
 async def get_courses(
     course_service: CoursesServiceDep,
@@ -28,7 +28,6 @@ async def get_courses(
     "/{course_id}",
     response_model=Course,
     responses={
-        401: {"model": OpenAPIDocExtraResponse},
         404: {"model": OpenAPIDocExtraResponse},
     },
 )
@@ -68,13 +67,12 @@ async def delete_course(
     "/",
     response_model=Course,
     responses={
-        400: {"model": OpenAPIDocExtraResponse},
         401: {"model": OpenAPIDocExtraResponse},
         404: {"model": OpenAPIDocExtraResponse},
     },
 )
 async def create_course(
-    course: Course,
+    course: CourseCreate,
     course_service: CoursesServiceDep,
     user: User = Depends(current_user),
 ):
@@ -86,18 +84,18 @@ async def create_course(
 @router.put(
     "/{course_id}",
     responses={
-        400: {"model": OpenAPIDocExtraResponse},
         401: {"model": OpenAPIDocExtraResponse},
         404: {"model": OpenAPIDocExtraResponse},
     },
 )
 async def update_course(
-    course: Course,
+    course_id: int,
+    course: CourseUpdate,
     course_service: CoursesServiceDep,
     user: User = Depends(current_user),
 ):
     """Update course"""
     await course_service.update(
-        course=course, user_id=user.id, is_admin=user.is_superuser
+        course_id=course_id, course=course, user_id=user.id, is_admin=user.is_superuser
     )
     return {"message": f"Course has been successfully updated"}
