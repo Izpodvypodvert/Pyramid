@@ -17,10 +17,10 @@ router = APIRouter(prefix="/courses", tags=["courses"])
     response_model=list[Course],
 )
 async def get_courses(
-    course_service: CoursesServiceDep,
+    courses_service: CoursesServiceDep,
 ):
     """Returns all curses"""
-    courses = await course_service.get_all()
+    courses = await courses_service.get_all()
     return courses
 
 
@@ -33,10 +33,10 @@ async def get_courses(
 )
 async def get_course(
     course_id: int,
-    course_service: CoursesServiceDep,
+    courses_service: CoursesServiceDep,
 ):
     """Returns specific course by id"""
-    course = await course_service.get_by_id(course_id)
+    course = await courses_service.get_by_id(course_id)
     return course
 
 
@@ -50,11 +50,11 @@ async def get_course(
 )
 async def delete_course(
     course_id: int,
-    course_service: CoursesServiceDep,
+    courses_service: CoursesServiceDep,
     user: User = Depends(current_user),
 ):
     """Deletes specific course of the author by id"""
-    deleted_count = await course_service.delete(
+    deleted_count = await courses_service.delete(
         course_id=course_id, user_id=user.id, is_admin=user.is_superuser
     )
     if deleted_count == 0:
@@ -73,11 +73,11 @@ async def delete_course(
 )
 async def create_course(
     course: CourseCreate,
-    course_service: CoursesServiceDep,
+    courses_service: CoursesServiceDep,
     user: User = Depends(current_user),
 ):
     """Creates  course"""
-    new_course = await course_service.create(course)
+    new_course = await courses_service.create(course)
     return new_course
 
 
@@ -91,11 +91,11 @@ async def create_course(
 async def update_course(
     course_id: int,
     course: CourseUpdate,
-    course_service: CoursesServiceDep,
+    courses_service: CoursesServiceDep,
     user: User = Depends(current_user),
 ):
     """Update course"""
-    await course_service.update(
+    await courses_service.update(
         course_id=course_id, course=course, user_id=user.id, is_admin=user.is_superuser
     )
     return {"message": f"Course has been successfully updated"}
