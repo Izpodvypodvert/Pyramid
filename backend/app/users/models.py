@@ -5,7 +5,7 @@ from pydantic import UUID4, EmailStr
 
 from sqlmodel import SQLModel, Field, Relationship, AutoString
 
-from app.courses.models import Course
+from app.courses.models import Course, Topic, Lesson
 from app.submissions.models import Submission
 
 
@@ -32,6 +32,8 @@ class User(SQLModel, table=True):
     is_verified: bool = Field(False, nullable=False)
 
     courses: list["Course"] = Relationship(back_populates="author")
+    topics: list["Topic"] = Relationship(back_populates="author")
+    lessons: list["Lesson"] = Relationship(back_populates="author")
     submissions: list["Submission"] = Relationship(back_populates="student")
     student_courses: list["StudentCourse"] = Relationship(back_populates="student")
     favorites: list["Favorite"] = Relationship(back_populates="student")

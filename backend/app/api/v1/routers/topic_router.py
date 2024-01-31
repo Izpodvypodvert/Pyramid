@@ -14,7 +14,7 @@ router = APIRouter(prefix="/topics", tags=["topics"])
 
 @router.get(
     "/",
-    response_model=Topic,
+    response_model=list[Topic],
 )
 async def get_topics(topics_service: TopicsServiceDep):
     """Returns all topics"""

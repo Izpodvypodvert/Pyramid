@@ -1,8 +1,8 @@
-"""First commit
+"""First migration
 
-Revision ID: 7287f01aab95
+Revision ID: 7c902399eac3
 Revises: 
-Create Date: 2024-01-26 20:05:24.653731
+Create Date: 2024-01-31 19:43:10.064138
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 import sqlmodel
 
 # revision identifiers, used by Alembic.
-revision: str = "7287f01aab95"
+revision: str = "7c902399eac3"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -97,10 +97,15 @@ def upgrade() -> None:
     op.create_table(
         "topic",
         sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("author_id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
         sa.Column("course_id", sa.Integer(), nullable=False),
         sa.Column("title", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("description", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("order", sa.Integer(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["author_id"],
+            ["user.id"],
+        ),
         sa.ForeignKeyConstraint(
             ["course_id"],
             ["course.id"],
@@ -110,10 +115,15 @@ def upgrade() -> None:
     op.create_table(
         "lesson",
         sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("author_id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
         sa.Column("topic_id", sa.Integer(), nullable=False),
         sa.Column("title", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("description", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("order", sa.Integer(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["author_id"],
+            ["user.id"],
+        ),
         sa.ForeignKeyConstraint(
             ["topic_id"],
             ["topic.id"],

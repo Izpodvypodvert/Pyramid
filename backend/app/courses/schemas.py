@@ -28,6 +28,7 @@ class BaseModelWithOrder(BaseModel):
 
 
 class TopicCreate(BaseModelWithOrder):
+    author_id: UUID4
     course_id: int
     title: str
     description: str
@@ -41,6 +42,7 @@ class TopicUpdate(TopicCreate):
 
 
 class LessonCreate(BaseModelWithOrder):
+    author_id: UUID4
     topic_id: int
     title: str
     description: str

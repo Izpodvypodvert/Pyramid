@@ -27,21 +27,25 @@ class Course(SQLModel, table=True):
 
 class Topic(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    author_id: UUID4 = Field(foreign_key="user.id")
     course_id: int = Field(foreign_key="course.id")
     title: str
     description: str
     order: int
 
+    author: "User" = Relationship(back_populates="topics")
     course: Course = Relationship(back_populates="topics")
     lessons: list["Lesson"] = Relationship(back_populates="topic")
 
 
 class Lesson(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    author_id: UUID4 = Field(foreign_key="user.id")
     topic_id: int = Field(foreign_key="topic.id")
     title: str
     description: str
     order: int
 
+    author: "User" = Relationship(back_populates="lessons")
     topic: Topic = Relationship(back_populates="lessons")
     steps: list["Step"] = Relationship(back_populates="lesson")

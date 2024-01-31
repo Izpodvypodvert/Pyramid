@@ -25,13 +25,16 @@ class TopicsService(AuthorshipMixin, BaseService[Course]):
     async def delete(
         self, topic_id: int, user_id: UUID4, is_admin: bool = False
     ) -> int:
-        await self._check_user_is_author_or_admin(topic_id, user_id, is_admin)
+        topic_to_delete = await self.get_by_id(topic_id)
+        await self._check_user_is_author_or_admin(
+            topic_to_delete.course_id, user_id, is_admin
+        )
         return await super().delete(topic_id)
 
     async def update(
         self, topic_id: int, topic: Topic, user_id: UUID4, is_admin: bool = False
     ) -> int:
-        await self._check_user_is_author_or_admin(topic_id, user_id, is_admin)
+        await self._check_user_is_author_or_admin(topic.course_id, user_id, is_admin)
         updated_data = topic.model_dump(exclude_unset=True)
         if not is_admin:
             updated_data.pop("is_published", None)
