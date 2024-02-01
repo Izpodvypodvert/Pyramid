@@ -25,6 +25,7 @@ class Step(SQLModel, table=True):
     lesson_id: int = Field(foreign_key="lesson.id")
     order: int
     step_kind: StepKind
+    is_published: bool = False
 
     lesson: "Lesson" = Relationship(back_populates="steps")
     theories: list["Theory"] = Relationship(back_populates="step")

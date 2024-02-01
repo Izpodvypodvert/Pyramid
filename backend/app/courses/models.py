@@ -31,6 +31,7 @@ class Topic(SQLModel, table=True):
     course_id: int = Field(foreign_key="course.id")
     title: str
     description: str
+    is_published: bool = False
     order: int
 
     author: "User" = Relationship(back_populates="topics")
@@ -44,6 +45,7 @@ class Lesson(SQLModel, table=True):
     topic_id: int = Field(foreign_key="topic.id")
     title: str
     description: str
+    is_published: bool = False
     order: int
 
     author: "User" = Relationship(back_populates="lessons")
