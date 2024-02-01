@@ -1,4 +1,4 @@
-from app.courses.models import Course, Lesson, Topic
+from app.courses.models import Course, Lesson, Step, Topic
 from app.utils.repository import SQLModelRepository
 
 
@@ -10,5 +10,9 @@ class TopicsRepository(SQLModelRepository):
     model = Topic
 
 
-class LessonRepository(SQLModelRepository):
+class LessonsRepository(SQLModelRepository):
     model = Lesson
+
+
+class StepsRepository(SQLModelRepository):
+    model = Step

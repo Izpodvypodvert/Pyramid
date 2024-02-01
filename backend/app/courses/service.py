@@ -37,3 +37,7 @@ class TopicsService(BaseServiceWithAuthorship):
 
 class LessonsService(BaseServiceWithAuthorship):
     ...
+
+
+class StepsService(BaseServiceWithAuthorship):
+    ...

@@ -1,6 +1,8 @@
 from fastapi import HTTPException
 from pydantic import UUID4, BaseModel, validator
 
+from app.courses.models import StepKind
+
 
 class CourseCreate(BaseModel):
     author_id: UUID4
@@ -39,6 +41,7 @@ class TopicUpdate(TopicCreate):
     title: str | None = None
     description: str | None = None
     order: int | None = None
+    is_published: bool | None = None
 
 
 class LessonCreate(BaseModelWithOrder):
@@ -53,3 +56,17 @@ class LessonUpdate(LessonCreate):
     title: str | None = None
     description: str | None = None
     order: int | None = None
+    is_published: bool | None = None
+
+
+class StepCreate(BaseModelWithOrder):
+    author_id: UUID4
+    lesson_id: int
+    step_kind: StepKind
+
+
+class StepUpdate(StepCreate):
+    topic_id: int | None = None
+    step_kind: StepKind | None = None
+    order: int | None = None
+    is_published: bool | None = None

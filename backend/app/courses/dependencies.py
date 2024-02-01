@@ -1,7 +1,12 @@
 from typing import Annotated
 from fastapi import Depends
-from app.courses.models import Course, Lesson, Topic
-from app.courses.service import CoursesService, LessonsService, TopicsService
+from app.courses.models import Course, Lesson, Step, Topic
+from app.courses.service import (
+    CoursesService,
+    LessonsService,
+    StepsService,
+    TopicsService,
+)
 from app.utils.transaction_manager import TManagerDep
 
 
@@ -26,3 +31,10 @@ def get_lessons_service(transaction_manager: TManagerDep) -> LessonsService:
 
 
 LessonsServiceDep = Annotated[LessonsService, Depends(get_lessons_service)]
+
+
+def get_steps_service(transaction_manager: TManagerDep) -> StepsService:
+    return StepsService(Step, transaction_manager)
+
+
+StepsServiceDep = Annotated[StepsService, Depends(get_steps_service)]
