@@ -44,12 +44,14 @@ class BaseRouter[T, S, G, V]:
 
     def _create_routes(self):
         @self.router.get("/", response_model=list[self.model])
-        async def get_items(service: self.service):
-            return await service.get_all()
+        async def get_items(service: self.service, user: User = Depends(current_user)):
+            return await service.get_all(user)
 
         @self.router.get("/{item_id}", response_model=self.model)
-        async def get_item(item_id: int, service: self.service):
-            item = await service.get_by_id(item_id)
+        async def get_item(
+            item_id: int, service: self.service, user: User = Depends(current_user)
+        ):
+            item = await service.get_by_id(item_id, user)
             return item
 
         @self.router.post("/", response_model=self.model, responses=self.responses)
@@ -58,7 +60,7 @@ class BaseRouter[T, S, G, V]:
             service: self.service,
             user: User = Depends(current_user),
         ):
-            new_item = await service.create(item)
+            new_item = await service.create(item, user)
             return new_item
 
         @self.router.put("/{item_id}", responses=self.responses)

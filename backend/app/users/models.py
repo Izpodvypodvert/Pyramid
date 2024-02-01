@@ -2,7 +2,6 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 from pydantic import UUID4, EmailStr
-
 from sqlmodel import SQLModel, Field, Relationship, AutoString
 
 from app.courses.models import Course, Topic, Lesson

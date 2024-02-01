@@ -2,11 +2,10 @@ from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING
 from pydantic import UUID4
-
 from sqlmodel import SQLModel, Field, Relationship
 
-# from app.steps.models import Step
 from app.steps.models import CodingTask, Test, Theory
+
 
 if TYPE_CHECKING:
     from app.submissions.models import Submission
@@ -27,6 +26,14 @@ class Course(SQLModel, table=True):
     favorites: list["Favorite"] = Relationship(back_populates="course")
     topics: list["Topic"] = Relationship(back_populates="course")
 
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        if isinstance(other, Course):
+            return self.id == other.id
+        return False
+
 
 class Topic(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -41,6 +48,14 @@ class Topic(SQLModel, table=True):
     course: Course = Relationship(back_populates="topics")
     lessons: list["Lesson"] = Relationship(back_populates="topic")
 
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        if isinstance(other, Topic):
+            return self.id == other.id
+        return False
+
 
 class Lesson(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -54,6 +69,14 @@ class Lesson(SQLModel, table=True):
     author: "User" = Relationship(back_populates="lessons")
     topic: Topic = Relationship(back_populates="lessons")
     steps: list["Step"] = Relationship(back_populates="lesson")
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        if isinstance(other, Lesson):
+            return self.id == other.id
+        return False
 
 
 class StepKind(Enum):
@@ -75,3 +98,11 @@ class Step(SQLModel, table=True):
     coding_tasks: list["CodingTask"] = Relationship(back_populates="step")
     tests: list["Test"] = Relationship(back_populates="step")
     submissions: list["Submission"] = Relationship(back_populates="step")
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        if isinstance(other, Step):
+            return self.id == other.id
+        return False

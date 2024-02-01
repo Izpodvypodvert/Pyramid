@@ -7,6 +7,7 @@ class UserRead(schemas.BaseUser[UUID4]):
     id, email address, is_active, is_superuser, is_verified."""
 
     username: str
+    is_author: bool
 
 
 class UserCreate(schemas.BaseUserCreate):
@@ -23,3 +24,4 @@ class UserUpdate(schemas.BaseUserUpdate):
     """
 
     username: str | None = None
+    is_author: bool | None = None
