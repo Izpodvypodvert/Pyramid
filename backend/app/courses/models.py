@@ -5,78 +5,47 @@ from pydantic import UUID4
 from sqlmodel import SQLModel, Field, Relationship
 
 from app.steps.models import CodingTask, Test, Theory
-
+from app.utils.mixins import HashMixin
 
 if TYPE_CHECKING:
     from app.submissions.models import Submission
     from app.users.models import User, StudentCourse, Favorite
 
 
-class Course(SQLModel, table=True):
+class BaseModel(SQLModel):
     id: int | None = Field(default=None, primary_key=True)
     author_id: UUID4 = Field(foreign_key="user.id")
     title: str
-    programming_language: str
     description: str
     is_published: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class Course(HashMixin, BaseModel, table=True):
+    programming_language: str
 
     author: "User" = Relationship(back_populates="courses")
     student_courses: list["StudentCourse"] = Relationship(back_populates="course")
     favorites: list["Favorite"] = Relationship(back_populates="course")
     topics: list["Topic"] = Relationship(back_populates="course")
 
-    def __hash__(self):
-        return hash(self.id)
 
-    def __eq__(self, other):
-        if isinstance(other, Course):
-            return self.id == other.id
-        return False
-
-
-class Topic(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    author_id: UUID4 = Field(foreign_key="user.id")
+class Topic(HashMixin, BaseModel, table=True):
     course_id: int = Field(foreign_key="course.id")
-    title: str
-    description: str
-    is_published: bool = False
     order: int
 
     author: "User" = Relationship(back_populates="topics")
     course: Course = Relationship(back_populates="topics")
     lessons: list["Lesson"] = Relationship(back_populates="topic")
 
-    def __hash__(self):
-        return hash(self.id)
 
-    def __eq__(self, other):
-        if isinstance(other, Topic):
-            return self.id == other.id
-        return False
-
-
-class Lesson(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    author_id: UUID4 = Field(foreign_key="user.id")
+class Lesson(HashMixin, BaseModel, table=True):
     topic_id: int = Field(foreign_key="topic.id")
-    title: str
-    description: str
-    is_published: bool = False
     order: int
 
     author: "User" = Relationship(back_populates="lessons")
     topic: Topic = Relationship(back_populates="lessons")
     steps: list["Step"] = Relationship(back_populates="lesson")
-
-    def __hash__(self):
-        return hash(self.id)
-
-    def __eq__(self, other):
-        if isinstance(other, Lesson):
-            return self.id == other.id
-        return False
 
 
 class StepKind(Enum):
@@ -85,7 +54,7 @@ class StepKind(Enum):
     TEST = "Test"
 
 
-class Step(SQLModel, table=True):
+class Step(HashMixin, SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     lesson_id: int = Field(foreign_key="lesson.id")
     order: int
@@ -98,11 +67,3 @@ class Step(SQLModel, table=True):
     coding_tasks: list["CodingTask"] = Relationship(back_populates="step")
     tests: list["Test"] = Relationship(back_populates="step")
     submissions: list["Submission"] = Relationship(back_populates="step")
-
-    def __hash__(self):
-        return hash(self.id)
-
-    def __eq__(self, other):
-        if isinstance(other, Step):
-            return self.id == other.id
-        return False
