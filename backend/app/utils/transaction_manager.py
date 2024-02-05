@@ -5,10 +5,10 @@ from fastapi import Depends
 from app.core.db import AsyncSessionLocal as async_session_maker
 
 from app.courses.repository import (
-    CoursesRepository,
-    LessonsRepository,
-    StepsRepository,
-    TopicsRepository,
+    CourseRepository,
+    LessonRepository,
+    StepRepository,
+    TopicRepository,
 )
 
 
@@ -16,7 +16,7 @@ class ITransactionManager(ABC):
     """Interface for implementing the UOW pattern
     for working with transactions to the database"""
 
-    courses: CoursesRepository
+    courses: CourseRepository
 
     @abstractmethod
     def __init__(self):
@@ -47,10 +47,10 @@ class TransactionManager(ITransactionManager):
 
     async def __aenter__(self):
         self.session = self.session_factory()
-        self.courses = CoursesRepository(self.session)
-        self.topics = TopicsRepository(self.session)
-        self.lessons = LessonsRepository(self.session)
-        self.steps = StepsRepository(self.session)
+        self.courses = CourseRepository(self.session)
+        self.topics = TopicRepository(self.session)
+        self.lessons = LessonRepository(self.session)
+        self.steps = StepRepository(self.session)
         return self
 
     async def __aexit__(self, exc_type, exc, tb):

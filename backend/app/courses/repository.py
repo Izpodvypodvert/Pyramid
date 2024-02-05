@@ -2,17 +2,17 @@ from app.courses.models import Course, Lesson, Step, Topic
 from app.utils.repository import SQLModelRepository
 
 
-class CoursesRepository(SQLModelRepository):
+class CourseRepository(SQLModelRepository):
     model = Course
 
 
-class TopicsRepository(SQLModelRepository):
+class TopicRepository(SQLModelRepository):
     model = Topic
 
 
-class LessonsRepository(SQLModelRepository):
+class LessonRepository(SQLModelRepository):
     model = Lesson
 
 
-class StepsRepository(SQLModelRepository):
+class StepRepository(SQLModelRepository):
     model = Step

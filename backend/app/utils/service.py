@@ -21,7 +21,7 @@ class BaseService[T]:
     def repository(self):
         if self._repository is None:
             self._repository = getattr(
-                self.transaction_manager, f"{self.entity_type.__name__.lower()}s"
+                self.transaction_manager, {self.entity_type.__name__.lower()}
             )
         return self._repository
 
