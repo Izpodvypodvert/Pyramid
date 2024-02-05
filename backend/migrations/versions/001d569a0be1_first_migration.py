@@ -1,18 +1,20 @@
 """First migration
 
-Revision ID: 7c902399eac3
+Revision ID: 001d569a0be1
 Revises: 
-Create Date: 2024-01-31 19:43:10.064138
+Create Date: 2024-02-05 14:40:53.037995
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
 import sqlmodel
 
+
 # revision identifiers, used by Alembic.
-revision: str = "7c902399eac3"
+revision: str = "001d569a0be1"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -48,12 +50,12 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("author_id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
         sa.Column("title", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.Column(
-            "programming_language", sqlmodel.sql.sqltypes.AutoString(), nullable=False
-        ),
         sa.Column("description", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("is_published", sa.Boolean(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column(
+            "programming_language", sqlmodel.sql.sqltypes.AutoString(), nullable=False
+        ),
         sa.ForeignKeyConstraint(
             ["author_id"],
             ["user.id"],
@@ -98,9 +100,11 @@ def upgrade() -> None:
         "topic",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("author_id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
-        sa.Column("course_id", sa.Integer(), nullable=False),
         sa.Column("title", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("description", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+        sa.Column("is_published", sa.Boolean(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("course_id", sa.Integer(), nullable=False),
         sa.Column("order", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ["author_id"],
@@ -116,9 +120,11 @@ def upgrade() -> None:
         "lesson",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("author_id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
-        sa.Column("topic_id", sa.Integer(), nullable=False),
         sa.Column("title", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("description", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+        sa.Column("is_published", sa.Boolean(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("topic_id", sa.Integer(), nullable=False),
         sa.Column("order", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ["author_id"],
@@ -139,6 +145,12 @@ def upgrade() -> None:
             "step_kind",
             sa.Enum("THEORY", "CODING_TASK", "TEST", name="stepkind"),
             nullable=False,
+        ),
+        sa.Column("author_id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
+        sa.Column("is_published", sa.Boolean(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["author_id"],
+            ["user.id"],
         ),
         sa.ForeignKeyConstraint(
             ["lesson_id"],
