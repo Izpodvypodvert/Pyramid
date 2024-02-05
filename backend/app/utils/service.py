@@ -3,6 +3,7 @@ from typing import Type
 from app.utils.transaction_manager import ITransactionManager
 from app.utils.exceptions import IncorrectIdException
 from app.users.dependencies import UserManager
+from app.utils.logger import services_logger
 
 
 class BaseService[T]:
@@ -21,7 +22,7 @@ class BaseService[T]:
     def repository(self):
         if self._repository is None:
             self._repository = getattr(
-                self.transaction_manager, {self.entity_type.__name__.lower()}
+                self.transaction_manager, self.entity_type.__name__.lower()
             )
         return self._repository
 

@@ -16,27 +16,22 @@ class ITransactionManager(ABC):
     """Interface for implementing the UOW pattern
     for working with transactions to the database"""
 
-    courses: CourseRepository
+    course: CourseRepository
 
     @abstractmethod
-    def __init__(self):
-        ...
+    def __init__(self): ...
 
     @abstractmethod
-    async def __aenter__(self):
-        ...
+    async def __aenter__(self): ...
 
     @abstractmethod
-    async def __aexit__(self, *args):
-        ...
+    async def __aexit__(self, *args): ...
 
     @abstractmethod
-    async def commit(self):
-        ...
+    async def commit(self): ...
 
     @abstractmethod
-    async def rollback(self):
-        ...
+    async def rollback(self): ...
 
 
 class TransactionManager(ITransactionManager):
@@ -47,10 +42,10 @@ class TransactionManager(ITransactionManager):
 
     async def __aenter__(self):
         self.session = self.session_factory()
-        self.courses = CourseRepository(self.session)
-        self.topics = TopicRepository(self.session)
-        self.lessons = LessonRepository(self.session)
-        self.steps = StepRepository(self.session)
+        self.course = CourseRepository(self.session)
+        self.topic = TopicRepository(self.session)
+        self.lesson = LessonRepository(self.session)
+        self.step = StepRepository(self.session)
         return self
 
     async def __aexit__(self, exc_type, exc, tb):
