@@ -7,28 +7,22 @@ from app.utils.logger import db_query_logger
 
 class AbstractRepository(ABC):
     @abstractmethod
-    def __init__(self, session: Session):
-        ...
+    def __init__(self, session: Session): ...
 
     @abstractmethod
-    async def find_one_or_none(self, **filter_by):
-        ...
+    async def find_one_or_none(self, **filter_by): ...
 
     @abstractmethod
-    async def find_all(self, **filter_by):
-        ...
+    async def find_all(self, **filter_by): ...
 
     @abstractmethod
-    async def insert_data(self, **data):
-        ...
+    async def insert_data(self, **data): ...
 
     @abstractmethod
-    async def update_fields_by_id(self, entity_id, **data):
-        ...
+    async def update_fields_by_id(self, entity_id, **data): ...
 
     @abstractmethod
-    async def delete(self, **filter_by):
-        ...
+    async def delete(self, **filter_by): ...
 
 
 class SQLModelRepository(AbstractRepository):
@@ -38,18 +32,14 @@ class SQLModelRepository(AbstractRepository):
         self.session = session
 
     @db_query_logger()
-    async def find_one_or_none(self, ignore_published_status=False, **filter_by):
+    async def find_one_or_none(self, **filter_by):
         statement = select(self.model).filter_by(**filter_by)
-        if not ignore_published_status:
-            statement = statement.filter(self.model.is_published == True)
         result = await self.session.exec(statement)
         return result.first()
 
     @db_query_logger()
-    async def find_all(self, ignore_published_status=False, **filter_by):
+    async def find_all(self, **filter_by):
         statement = select(self.model).filter_by(**filter_by)
-        if not ignore_published_status:
-            statement = statement.filter(self.model.is_published == True)
         result = await self.session.exec(statement)
         return result.all()
 
