@@ -10,6 +10,12 @@ from app.courses.repository import (
     StepRepository,
     TopicRepository,
 )
+from app.steps.repository import (
+    TheoryRepository,
+    CodingTaskRepository,
+    TestRepository,
+    TestChoiceRepository,
+)
 
 
 class ITransactionManager(ABC):
@@ -46,6 +52,12 @@ class TransactionManager(ITransactionManager):
         self.topic = TopicRepository(self.session)
         self.lesson = LessonRepository(self.session)
         self.step = StepRepository(self.session)
+
+        self.theory = TheoryRepository(self.session)
+        self.codingtask = CodingTaskRepository(self.session)
+        self.test = TestRepository(self.session)
+        self.testchoice = TestChoiceRepository(self.session)
+
         return self
 
     async def __aexit__(self, exc_type, exc, tb):
