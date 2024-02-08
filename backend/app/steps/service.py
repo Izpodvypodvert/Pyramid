@@ -1,0 +1,13 @@
+from app.utils.service import BaseService
+
+
+class TheoriesService(BaseService): ...
+
+
+class CodingTasksService(BaseService): ...
+
+
+class TestsService(BaseService): ...
+
+
+class TestChoicesService(BaseService): ...
