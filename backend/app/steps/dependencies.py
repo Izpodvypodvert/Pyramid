@@ -3,8 +3,13 @@ from fastapi import Depends
 
 from app.utils.transaction_manager import TManagerDep
 from app.users.dependencies import UserManager, get_user_manager
-from app.steps.service import CodingTasksService, TestsService, TheoriesService
-from app.steps.models import CodingTask, Test, Theory
+from app.steps.service import (
+    CodingTasksService,
+    TestChoicesService,
+    TestsService,
+    TheoriesService,
+)
+from app.steps.models import CodingTask, Test, TestChoice, Theory
 
 
 def get_theory_service(
@@ -35,3 +40,13 @@ def get_test_service(
 
 
 TestsServiceDep = Annotated[TestsService, Depends(get_test_service)]
+
+
+def get_test_choice_service(
+    transaction_manager: TManagerDep,
+    user_manager: UserManager = Depends(get_user_manager),
+) -> TestChoicesService:
+    return TestChoicesService(TestChoice, transaction_manager, user_manager)
+
+
+TestChoicesServiceDep = Annotated[TestChoicesService, Depends(get_test_choice_service)]

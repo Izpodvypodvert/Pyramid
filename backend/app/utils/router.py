@@ -2,8 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Type
 
 from app.utils.exceptions import OpenAPIDocExtraResponse
-from app.users.models import User
-from app.users.dependencies import current_user
 
 
 class BaseRouter[T, S, G, V]:
@@ -44,33 +42,24 @@ class BaseRouter[T, S, G, V]:
 
     def _create_routes(self):
         @self.router.get("/", response_model=list[self.model])
-        async def get_items(service: self.service, user: User = Depends(current_user)):
-            return await service.get_all(user)
+        async def get_items(service: self.service):
+            return await service.get_all()
 
         @self.router.get("/{item_id}", response_model=self.model)
-        async def get_item(
-            item_id: int, service: self.service, user: User = Depends(current_user)
-        ):
-            item = await service.get_by_id(item_id, user)
+        async def get_item(item_id: int, service: self.service):
+            item = await service.get_by_id(item_id)
             return item
 
         @self.router.post("/", response_model=self.model, responses=self.responses)
-        async def create_item(
-            item: self.model_create,
-            service: self.service,
-            user: User = Depends(current_user),
-        ):
-            new_item = await service.create(item, user)
+        async def create_item(item: self.model_create, service: self.service):
+            new_item = await service.create(item)
             return new_item
 
         @self.router.put("/{item_id}", responses=self.responses)
         async def update_item(
-            item_id: int,
-            item: self.model_update,
-            service: self.service,
-            user: User = Depends(current_user),
+            item_id: int, item: self.model_update, service: self.service
         ):
-            await service.update(item_id, item, user.id, user.is_superuser)
+            await service.update(item_id, item)
             return {"message": f"Item has been successfully updated"}
 
         @self.router.delete(
@@ -78,10 +67,8 @@ class BaseRouter[T, S, G, V]:
             responses=self.responses,
             status_code=status.HTTP_204_NO_CONTENT,
         )
-        async def delete_item(
-            item_id: int, service: self.service, user: User = Depends(current_user)
-        ):
-            deleted_count = await service.delete(item_id, user.id, user.is_superuser)
+        async def delete_item(item_id: int, service: self.service):
+            deleted_count = await service.delete(item_id)
             if deleted_count == 0:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,

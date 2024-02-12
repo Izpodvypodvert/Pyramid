@@ -1,10 +1,10 @@
 from fastapi import Depends, HTTPException, status
 from app.users.dependencies import current_user
-from backend.app.users.models import User
-from backend.app.utils.router import BaseRouter
+from app.users.models import User
+from app.utils.router import BaseRouter
 
 
-class CoursesBaseRouter(BaseRouter):
+class BaseRouterWithUser(BaseRouter):
 
     def _create_routes(self):
         @self.router.get("/", response_model=list[self.model])
