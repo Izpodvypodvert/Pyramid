@@ -1,0 +1,37 @@
+from typing import Annotated
+from fastapi import Depends
+
+from app.utils.transaction_manager import TManagerDep
+from app.users.dependencies import UserManager, get_user_manager
+from app.steps.service import CodingTasksService, TestsService, TheoriesService
+from app.steps.models import CodingTask, Test, Theory
+
+
+def get_theory_service(
+    transaction_manager: TManagerDep,
+    user_manager: UserManager = Depends(get_user_manager),
+) -> TheoriesService:
+    return TheoriesService(Theory, transaction_manager, user_manager)
+
+
+TheoriesServiceDep = Annotated[TheoriesService, Depends(get_theory_service)]
+
+
+def get_coding_task_service(
+    transaction_manager: TManagerDep,
+    user_manager: UserManager = Depends(get_user_manager),
+) -> CodingTasksService:
+    return CodingTasksService(CodingTask, transaction_manager, user_manager)
+
+
+CodingTasksServiceDep = Annotated[TheoriesService, Depends(get_theory_service)]
+
+
+def get_test_service(
+    transaction_manager: TManagerDep,
+    user_manager: UserManager = Depends(get_user_manager),
+) -> TestsService:
+    return TestsService(Test, transaction_manager, user_manager)
+
+
+TestsServiceDep = Annotated[TestsService, Depends(get_test_service)]
