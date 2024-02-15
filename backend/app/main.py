@@ -10,6 +10,7 @@ from app.api.v1.routers.testchoice_router import test_choice_router
 from app.api.v1.routers.test_router import test_router
 from app.api.v1.routers.theory_router import theory_router
 from app.api.v1.routers.codingtask_router import coding_task_router
+from app.api.v1.routers.submission_router import submission_router
 
 
 app = FastAPI()
@@ -31,3 +32,4 @@ app.include_router(test_choice_router)
 app.include_router(test_router)
 app.include_router(theory_router)
 app.include_router(coding_task_router)
+app.include_router(submission_router)
