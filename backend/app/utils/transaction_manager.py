@@ -16,6 +16,7 @@ from app.steps.repository import (
     TestRepository,
     TestChoiceRepository,
 )
+from app.submissions.repository import SubmissionRepository
 
 
 class ITransactionManager(ABC):
@@ -57,6 +58,8 @@ class TransactionManager(ITransactionManager):
         self.codingtask = CodingTaskRepository(self.session)
         self.test = TestRepository(self.session)
         self.testchoice = TestChoiceRepository(self.session)
+
+        self.submission = SubmissionRepository(self.session)
 
         return self
 

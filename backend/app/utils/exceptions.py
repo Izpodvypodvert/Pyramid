@@ -8,6 +8,12 @@ class OpenAPIDocExtraResponse(BaseModel):
     detail: str
 
 
+class MissingRepositoryError(Exception):
+    def __init__(self, entity_name: str):
+        message = f"В TransactionManager в метод __aenter__ необходимо добавить атрибут '{entity_name}'."
+        super().__init__(message)
+
+
 class AppException(HTTPException):
     """Base class for all courses exceptions"""
 

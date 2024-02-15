@@ -1,7 +1,7 @@
 from typing import Type
 
 from app.utils.transaction_manager import ITransactionManager
-from app.utils.exceptions import IncorrectIdException
+from app.utils.exceptions import IncorrectIdException, MissingRepositoryError
 from app.users.dependencies import UserManager
 from app.utils.logger import services_logger
 
@@ -21,9 +21,12 @@ class BaseService[T]:
     @property
     def repository(self):
         if self._repository is None:
-            self._repository = getattr(
-                self.transaction_manager, self.entity_type.__name__.lower()
-            )
+            try:
+                self._repository = getattr(
+                    self.transaction_manager, self.entity_type.__name__.lower()
+                )
+            except AttributeError as e:
+                raise MissingRepositoryError(self.entity_type.__name__.lower()) from e
         return self._repository
 
     async def get_all(self) -> list[T] | None:

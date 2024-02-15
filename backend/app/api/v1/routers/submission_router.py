@@ -9,6 +9,6 @@ submission_router = BaseRouter(
     model_create=SubmissionCreate,
     model_update=Submission,
     service=SubmissionsServiceDep,
-    prefix="/submission",
-    tags=["submission"],
+    prefix="/submissions",
+    tags=["submissions"],
 ).router
