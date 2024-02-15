@@ -16,7 +16,7 @@ class Submission(SQLModel, table=True):
     step_id: int = Field(foreign_key="step.id")
     submitted_answer: str
     is_correct: bool
-    points_awarded: int
+    points_awarded: int = 0
     submitted_at: datetime
 
     step: "Step" = Relationship(back_populates="submissions")
