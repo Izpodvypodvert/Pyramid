@@ -15,9 +15,9 @@ class Submission(SQLModel, table=True):
     student_id: UUID4 = Field(foreign_key="user.id")
     step_id: int = Field(foreign_key="step.id")
     submitted_answer: str
-    is_correct: bool
+    is_correct: bool = False
     points_awarded: int = 0
-    submitted_at: datetime
+    submitted_at: datetime = Field(default_factory=datetime.utcnow)
 
     step: "Step" = Relationship(back_populates="submissions")
     student: "User" = Relationship(back_populates="submissions")
