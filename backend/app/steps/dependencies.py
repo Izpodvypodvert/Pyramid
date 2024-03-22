@@ -29,7 +29,7 @@ def get_coding_task_service(
     return CodingTasksService(CodingTask, transaction_manager, user_manager)
 
 
-CodingTasksServiceDep = Annotated[TheoriesService, Depends(get_theory_service)]
+CodingTasksServiceDep = Annotated[CodingTasksService, Depends(get_coding_task_service)]
 
 
 def get_test_service(

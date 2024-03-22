@@ -1,7 +1,7 @@
 from sqlmodel import select
 from app.submissions.models import Submission
 from app.utils.repository import SQLModelRepository
-from backend.app.users.models import User
+from app.users.models import User
 
 
 class SubmissionRepository(SQLModelRepository):

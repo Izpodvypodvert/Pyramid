@@ -17,6 +17,9 @@ class Settings(BaseSettings):
 
     secret: str = ""
 
+    rabbitmq_default_user: str
+    rabbitmq_default_pass: str
+
     class Config:
         env_file = "../.env"
 

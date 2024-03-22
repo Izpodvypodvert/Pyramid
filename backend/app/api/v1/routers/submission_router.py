@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 from app.submissions.dependencies import SubmissionsServiceDep
 from app.submissions.models import Submission
 from app.submissions.schemas import SubmissionCreate
@@ -25,7 +26,7 @@ submission_router = APIRouter(prefix="/submissions", tags=["submissions"])
 
 @submission_router.post(
     "/",
-    response_model=Submission,
+    response_model=None,
     responses={
         401: {"model": OpenAPIDocExtraResponse},
         404: {"model": OpenAPIDocExtraResponse},
@@ -36,8 +37,11 @@ async def create_submission(
     service: SubmissionsServiceDep,
     user: User = Depends(current_user),
 ):
-    new_submission = await service.create(item)
-    return new_submission
+    updated_item = item.model_dump()
+    updated_item.update({"student_id": user.id})
+    result = await service.create(updated_item)
+
+    return result
 
 
 @submission_router.get(
