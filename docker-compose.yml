@@ -1,14 +1,32 @@
 version: "3.8"
 
 services:
-    test_db:
+    backend:
+        container_name: backend
+        build: 
+            dockerfile: ./backend/Dockerfile
+        command: bash -c "cd backend && poetry run alembic upgrade head && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+        volumes:
+            - .:/app
+        ports:
+            - 8000:8000
+        restart: always
+        depends_on:
+            - db
+        environment:
+            - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+            - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    db:
         image: postgres:15.3
         ports:
             - "5432:5432"
+        env_file:
+            ./backend/.env
         environment:
             - POSTGRES_USER=${POSTGRES_USER}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
             - POSTGRES_DB=${POSTGRES_DB}
+
     redis:
         image: redis:latest
         restart: always
@@ -22,32 +40,40 @@ services:
         ports:
             - "5672:5672"
             - "15672:15672"
+        env_file:
+            ./backend/.env
         environment:
             - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
             - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
             - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
-  
-    # celery_worker:
-    #     build:
-    #         context: .
-    #         dockerfile: Dockerfile
-    #     command: celery -A tasks.celery_app worker -l debug
-    #     depends_on:
-    #         - redis
-    #         - rabbitmq
-    #     volumes:
-    #         - shared_vol:/app
-    #         - /var/run/docker.sock:/var/run/docker.sock
+    celery_worker:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: celery -A app.tasks.celery_app worker -l debug
+        depends_on:
+            - redis
+            - rabbitmq
+        volumes:
+            - ./backend/app/tasks:/app/app/tasks
+            - /var/run/docker.sock:/var/run/docker.sock
+        environment:
+            - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+            - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
 
-    # flower:
-    #     build:
-    #         context: .
-    #         dockerfile: Dockerfile
-    #     command: celery -A tasks.celery_app.celery_app flower --broker=amqp://rabbitmq:rabbitmq@rabbitmq:5672// --port=5555
-    #     ports:
-    #         - "5555:5555"
-    #     depends_on:
-    #         - rabbitmq
-    #         - redis
-volumes:
-    shared_vol:
+    flower:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: celery -A app.tasks.celery_app flower --broker=amqp://rabbitmq:rabbitmq@rabbitmq:5672// --port=5555
+        ports:
+            - "5555:5555"
+        depends_on:
+            - rabbitmq
+            - redis
+        environment:
+            - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+            - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+
+# volumes:
+#     shared_volume:

@@ -28,7 +28,11 @@ RUN pip install redis celery flower
 
 # Копирование задач в контейнер
 WORKDIR /app
-COPY /backend/app/tasks /app/tasks
+
+COPY backend/app/tasks /app/app/tasks
+# COPY /backend/ /app/
+
+CMD ["tail", "-f", "/dev/null"]
 
 # Запуск Celery worker
-#CMD celery -A tasks worker --loglevel=info
+#CMD celery -A app.tasks.celery_app worker -l info

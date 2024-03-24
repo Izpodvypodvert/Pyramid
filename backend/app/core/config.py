@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     rabbitmq_default_pass: str
 
     class Config:
-        env_file = "../.env"
+        env_file = ".env"
 
 
 settings = Settings()
