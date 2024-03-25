@@ -57,6 +57,7 @@ services:
         volumes:
             - ./backend/app/tasks:/app/app/tasks
             - /var/run/docker.sock:/var/run/docker.sock
+            - shared_vol:/app
         environment:
             - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
             - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
@@ -75,5 +76,5 @@ services:
             - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
             - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
 
-# volumes:
-#     shared_volume:
+volumes:
+    shared_vol:

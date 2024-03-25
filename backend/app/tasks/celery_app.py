@@ -18,3 +18,4 @@ celery_app.conf.broker_connection_retry_on_startup = True
 celery_app.conf.backend_connection_retry_on_startup = True
 
 celery_logger = get_task_logger(__name__)
+

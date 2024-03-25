@@ -1,7 +1,9 @@
-from app.utils.service import BaseService
-from app.users.models import User
 from app.submissions.schemas import SubmissionCreate
-from app.tasks.submission_tasks import hello_world
+from app.tasks.submission_tasks import process_submission
+from app.users.models import User
+from app.utils.logger import main_logger
+from app.utils.service import BaseService
+
 
 class SubmissionsService(BaseService):
     async def get_user_submissions_by_step_id(self, step_id: int, user: User):
@@ -10,10 +12,11 @@ class SubmissionsService(BaseService):
 
     async def create(self, submission: SubmissionCreate):
         try:
-            result = hello_world.delay().get(timeout=3)
-            print(result)
-
+            result2 = process_submission.delay(submission["submitted_answer"]).get(timeout=3)
+            main_logger.info(f'result2 is {result2}')
+            return {"result": result2} 
+        
         except Exception as e:
-            print(e)
+            return {"result": "The waiting time has been exceeded"}
 
-        return {"result": "sliva"} 
+        
