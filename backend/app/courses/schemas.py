@@ -5,14 +5,12 @@ from app.courses.models import StepKind
 
 
 class CourseCreate(BaseModel):
-    author_id: UUID4
     title: str
     programming_language: str
     description: str
 
 
 class CourseUpdate(BaseModel):
-    author_id: UUID4
     title: str | None = None
     programming_language: str | None = None
     description: str | None = None
@@ -30,7 +28,6 @@ class BaseModelWithOrder(BaseModel):
 
 
 class TopicCreate(BaseModelWithOrder):
-    author_id: UUID4
     course_id: int
     title: str
     description: str
@@ -45,7 +42,6 @@ class TopicUpdate(TopicCreate):
 
 
 class LessonCreate(BaseModelWithOrder):
-    author_id: UUID4
     topic_id: int
     title: str
     description: str
@@ -60,7 +56,6 @@ class LessonUpdate(LessonCreate):
 
 
 class StepCreate(BaseModelWithOrder):
-    author_id: UUID4
     lesson_id: int
     step_kind: StepKind
 

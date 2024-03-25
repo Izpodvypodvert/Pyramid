@@ -11,6 +11,10 @@ class BaseRouterWithUser(BaseRouter):
         async def get_items(service: self.service, user: User = Depends(current_user)):
             return await service.get_all(user)
 
+        @self.router.get("/{parent_id}", response_model=list[self.model])
+        async def get_items_by_parent_id(parent_id: int, service: self.service,  user: User = Depends(current_user)):
+            return await service.get_all_by_id(user, parent_id)
+        
         @self.router.get("/{item_id}", response_model=self.model)
         async def get_item(
             item_id: int, service: self.service, user: User = Depends(current_user)

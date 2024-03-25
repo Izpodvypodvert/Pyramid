@@ -3,7 +3,6 @@ from typing import Type
 from app.utils.transaction_manager import ITransactionManager
 from app.utils.exceptions import IncorrectIdException, MissingRepositoryError
 from app.users.dependencies import UserManager
-from app.utils.logger import services_logger
 
 
 class BaseService[T]:
