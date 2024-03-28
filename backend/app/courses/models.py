@@ -7,9 +7,10 @@ from sqlmodel import SQLModel, Field, Relationship
 from app.steps.models import CodingTask, Test, Theory
 from app.utils.mixins import HashMixin
 
+
 if TYPE_CHECKING:
     from app.submissions.models import Submission
-    from app.users.models import User, StudentCourse, Favorite
+    from app.users.models import User, StudentCourse, Favorite, UserProgress
 
 
 class BaseModel(SQLModel):
@@ -28,6 +29,7 @@ class Course(HashMixin, BaseModel, table=True):
     student_courses: list["StudentCourse"] = Relationship(back_populates="course")
     favorites: list["Favorite"] = Relationship(back_populates="course")
     topics: list["Topic"] = Relationship(back_populates="course")
+    user_progress: list["UserProgress"] = Relationship(back_populates="course")
 
 
 class Topic(HashMixin, BaseModel, table=True):
@@ -62,8 +64,13 @@ class Step(HashMixin, SQLModel, table=True):
     author_id: UUID4 = Field(foreign_key="user.id")
     is_published: bool = False
 
+    theory_id: int | None = Field(default=None, foreign_key="theory.id")
+    coding_task_id: int | None = Field(default=None, foreign_key="coding_task.id")
+    test_id: int | None = Field(default=None, foreign_key="test.id")
+
     lesson: "Lesson" = Relationship(back_populates="steps")
-    theories: list["Theory"] = Relationship(back_populates="step")
-    coding_tasks: list["CodingTask"] = Relationship(back_populates="step")
-    tests: list["Test"] = Relationship(back_populates="step")
+    theory: "Theory" | None = Relationship(back_populates="step")
+    coding_task: "CodingTask" | None = Relationship(back_populates="step")
+    test: "Test" | None = Relationship(back_populates="step")
     submissions: list["Submission"] = Relationship(back_populates="step")
+    user_progress: list["UserProgress"] = Relationship(back_populates="step")

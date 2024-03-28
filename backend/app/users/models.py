@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from pydantic import UUID4, EmailStr
 from sqlmodel import SQLModel, Field, Relationship, AutoString
 
-from app.courses.models import Course, Topic, Lesson
+from app.courses.models import Course, Topic, Lesson, Step
 from app.submissions.models import Submission
 
 
@@ -61,3 +61,16 @@ class Favorite(SQLModel, table=True):
 
     student: User = Relationship(back_populates="favorites")
     course: "Course" = Relationship(back_populates="favorites")
+
+
+class UserProgress(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: UUID4 = Field(foreign_key="user.id")
+    course_id: int = Field(foreign_key="course.id", index=True)
+    step_id: int = Field(foreign_key="step.id", index=True)
+    is_completed: bool = Field(default=False)
+    completed_at: datetime | None = Field(default=None)
+
+    user: "User" = Relationship(back_populates="progress")
+    course: "Course" = Relationship(back_populates="user_progress")
+    step: "Step" = Relationship(back_populates="user_progress")
