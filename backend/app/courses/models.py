@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from pydantic import UUID4
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -64,13 +64,9 @@ class Step(HashMixin, SQLModel, table=True):
     author_id: UUID4 = Field(foreign_key="user.id")
     is_published: bool = False
 
-    theory_id: int | None = Field(default=None, foreign_key="theory.id")
-    coding_task_id: int | None = Field(default=None, foreign_key="coding_task.id")
-    test_id: int | None = Field(default=None, foreign_key="test.id")
-
     lesson: "Lesson" = Relationship(back_populates="steps")
-    theory: "Theory" | None = Relationship(back_populates="step")
-    coding_task: "CodingTask" | None = Relationship(back_populates="step")
-    test: "Test" | None = Relationship(back_populates="step")
+    theory: Optional["Theory"] = Relationship(back_populates="step")
+    coding_task: Optional["CodingTask"] = Relationship(back_populates="step")
+    test: Optional["Test"] = Relationship(back_populates="step")
     submissions: list["Submission"] = Relationship(back_populates="step")
     user_progress: list["UserProgress"] = Relationship(back_populates="step")

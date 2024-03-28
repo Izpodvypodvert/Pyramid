@@ -36,6 +36,7 @@ class User(SQLModel, table=True):
     submissions: list["Submission"] = Relationship(back_populates="student")
     student_courses: list["StudentCourse"] = Relationship(back_populates="student")
     favorites: list["Favorite"] = Relationship(back_populates="student")
+    progress: list["UserProgress"] = Relationship(back_populates="user")
 
     class Config:
         orm_mode = True
