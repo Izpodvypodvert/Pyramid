@@ -23,9 +23,9 @@ def process_submission(submitted_answer: str) -> str:
     result = create_subprocess(command)
     if temp_filename:
         os.remove(temp_filename)
-        
-    return f"Все ок я в норме. {result}"
-    
+
+    return result.strip()
+
 
 def create_subprocess(program: list[str]):
     process = Popen(program, stdout=PIPE, stderr=PIPE)
