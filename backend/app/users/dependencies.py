@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Annotated, Optional, Union
 
 from fastapi import Depends, Request
 from fastapi_users import (
@@ -19,8 +19,10 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.config import settings
 from app.core.db import get_async_session
-from app.users.models import User
+from app.users.models import User, UserProgress
 from app.users.schemas import UserCreate
+from app.users.service import UserProgressService
+from app.utils.transaction_manager import TManagerDep
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
@@ -72,3 +74,13 @@ fastapi_users = FastAPIUsers[User, UUID4](
 
 current_user = fastapi_users.current_user(active=True)
 current_superuser = fastapi_users.current_user(active=True, superuser=True)
+
+
+def get_courses_service(
+    transaction_manager: TManagerDep,
+    user_manager: UserManager = Depends(get_user_manager),
+) -> UserProgressService:
+    return UserProgressService(UserProgress, transaction_manager, user_manager)
+
+
+UserProgressServiceDep = Annotated[UserProgressService, Depends(get_courses_service)]
