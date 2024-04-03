@@ -57,6 +57,7 @@ class LessonUpdate(LessonCreate):
 
 class StepCreate(BaseModelWithOrder):
     lesson_id: int
+    course_id: int
     step_kind: StepKind
 
 

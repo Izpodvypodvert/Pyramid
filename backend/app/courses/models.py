@@ -29,6 +29,7 @@ class Course(HashMixin, BaseModel, table=True):
     student_courses: list["StudentCourse"] = Relationship(back_populates="course")
     favorites: list["Favorite"] = Relationship(back_populates="course")
     topics: list["Topic"] = Relationship(back_populates="course")
+    steps: list["Step"] = Relationship(back_populates="course")
     user_progress: list["UserProgress"] = Relationship(back_populates="course")
 
 
@@ -48,6 +49,7 @@ class Lesson(HashMixin, BaseModel, table=True):
     author: "User" = Relationship(back_populates="lessons")
     topic: Topic = Relationship(back_populates="lessons")
     steps: list["Step"] = Relationship(back_populates="lesson")
+    user_progress: list["UserProgress"] = Relationship(back_populates="lesson")
 
 
 class StepKind(Enum):
@@ -58,12 +60,14 @@ class StepKind(Enum):
 
 class Step(HashMixin, SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    course_id: int = Field(foreign_key="course.id")
     lesson_id: int = Field(foreign_key="lesson.id")
     order: int
     step_kind: StepKind
     author_id: UUID4 = Field(foreign_key="user.id")
     is_published: bool = False
 
+    course: "Course" = Relationship(back_populates="steps")
     lesson: "Lesson" = Relationship(back_populates="steps")
     theory: Optional["Theory"] = Relationship(back_populates="step")
     coding_task: Optional["CodingTask"] = Relationship(

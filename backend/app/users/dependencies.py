@@ -76,11 +76,13 @@ current_user = fastapi_users.current_user(active=True)
 current_superuser = fastapi_users.current_user(active=True, superuser=True)
 
 
-def get_courses_service(
+def get_user_progress_service(
     transaction_manager: TManagerDep,
     user_manager: UserManager = Depends(get_user_manager),
 ) -> UserProgressService:
     return UserProgressService(UserProgress, transaction_manager, user_manager)
 
 
-UserProgressServiceDep = Annotated[UserProgressService, Depends(get_courses_service)]
+UserProgressServiceDep = Annotated[
+    UserProgressService, Depends(get_user_progress_service)
+]

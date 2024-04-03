@@ -1,10 +1,12 @@
+from typing import Optional
 from app.submissions.schemas import SubmissionCreate
 from app.steps.models import TestType
 from app.tasks.submission_tasks import process_submission
 from app.users.models import User
 from app.utils.logger import main_logger
 from app.utils.service import BaseService
-from app.courses.models import StepKind
+from app.courses.models import Step, StepKind
+from app.utils.transaction_manager import TransactionManager
 
 
 class SubmissionsService(BaseService):
@@ -18,8 +20,8 @@ class SubmissionsService(BaseService):
             submission["submitted_answer"]
         )
         response = {"result": result, "is_correct": False}
-        async with self.transaction_manager as tm:
-            step = await tm.step.find_one_or_none(
+        async with self.transaction_manager:
+            step = await self.transaction_manager.step.find_one_or_none(
                 ignore_published_status=True, id=submission["step_id"]
             )
             main_logger.info(step)
@@ -36,6 +38,13 @@ class SubmissionsService(BaseService):
                         response.update({"is_correct": True})
                         # так же нужно добавить создание объекта UserProgress с полем is_completed = True
                         # для этого нужно сделать соответствующий сервис и репозиторий в модуле course
+
+                        await self.transaction_manager.userprogress.insert_data(
+                            course_id=step.course_id,
+                            lesson_id=step.lesson_id,
+                            step_id=step.id,
+                            is_completed=True,
+                        )
                     await self.repository.insert_data(**submission)
 
         return response
