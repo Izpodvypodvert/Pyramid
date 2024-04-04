@@ -1,12 +1,10 @@
 from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
 from app.submissions.dependencies import SubmissionsServiceDep
 from app.submissions.models import Submission
 from app.submissions.schemas import SubmissionCreate
 
 from app.users.dependencies import current_user
 from app.users.models import User
-from app.utils.router import BaseRouter
 
 from app.utils.exceptions import OpenAPIDocExtraResponse
 

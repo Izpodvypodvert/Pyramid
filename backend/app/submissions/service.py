@@ -36,10 +36,9 @@ class SubmissionsService(BaseService):
                     if result == coding_task.simple_test_expected_output:
                         submission.update({"is_correct": True})
                         response.update({"is_correct": True})
-                        # так же нужно добавить создание объекта UserProgress с полем is_completed = True
-                        # для этого нужно сделать соответствующий сервис и репозиторий в модуле course
 
                         await self.transaction_manager.userprogress.insert_data(
+                            user_id=submission["student_id"],
                             course_id=step.course_id,
                             lesson_id=step.lesson_id,
                             step_id=step.id,
