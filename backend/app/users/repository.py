@@ -23,3 +23,16 @@ class UserProgressRepository(SQLModelRepository):
         )
         progress = await self.session.exec(statement)
         return progress.all()
+
+    async def get_or_create_progress(self, **data):
+        progress_entity = await self.find_one_or_none(
+            user_id=data.get("user_id"),
+            course_id=data.get("course_id"),
+            lesson_id=data.get("lesson_id"),
+            step_id=data.get("step_id"),
+        )
+
+        if progress_entity:
+            return progress_entity
+
+        return await self.insert_data(**data)

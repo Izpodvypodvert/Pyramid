@@ -69,10 +69,14 @@ class Step(HashMixin, SQLModel, table=True):
 
     course: "Course" = Relationship(back_populates="steps")
     lesson: "Lesson" = Relationship(back_populates="steps")
-    theory: Optional["Theory"] = Relationship(back_populates="step")
+    theory: Optional["Theory"] = Relationship(
+        back_populates="step", sa_relationship_kwargs={"lazy": "joined"}
+    )
     coding_task: Optional["CodingTask"] = Relationship(
         back_populates="step", sa_relationship_kwargs={"lazy": "joined"}
     )
-    test: Optional["Test"] = Relationship(back_populates="step")
+    test: Optional["Test"] = Relationship(
+        back_populates="step", sa_relationship_kwargs={"lazy": "joined"}
+    )
     submissions: list["Submission"] = Relationship(back_populates="step")
     user_progress: list["UserProgress"] = Relationship(back_populates="step")

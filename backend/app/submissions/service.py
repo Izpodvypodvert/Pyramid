@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 from app.submissions.schemas import SubmissionCreate
 from app.steps.models import TestType
@@ -15,50 +16,28 @@ class SubmissionsService(BaseService):
             return await self.repository.get_user_submissions_by_step_id(step_id, user)
 
     async def create(self, submission: dict):
-
         result: str = await self._get_result_of_coding_task(
             submission["submitted_answer"]
         )
-        response = {"result": result, "is_correct": False}
-        async with self.transaction_manager:
-            step = await self.transaction_manager.step.find_one_or_none(
-                ignore_published_status=True, id=submission["step_id"]
-            )
-            main_logger.info(step)
-            if step.step_kind == StepKind.CODING_TASK:
-                coding_task = step.coding_task
-                main_logger.info(coding_task)
-                if coding_task.test_type == TestType.SIMPLE:
-                    main_logger.info(
-                        f"coding_task.simple_test_expected_output is {coding_task.simple_test_expected_output}"
-                    )
-                    main_logger.info(f"and result is {result}")
-                    if result == coding_task.simple_test_expected_output:
-                        submission.update({"is_correct": True})
-                        response.update({"is_correct": True})
+        step = await self._get_step(submission["step_id"])
 
-                        await self.transaction_manager.userprogress.insert_data(
-                            user_id=submission["student_id"],
-                            course_id=step.course_id,
-                            lesson_id=step.lesson_id,
-                            step_id=step.id,
-                            is_completed=True,
-                        )
-                    await self.repository.insert_data(**submission)
+        response = {"result": result, "is_correct": False}
+
+        if step.step_kind == StepKind.CODING_TASK:
+            response = await self._handle_coding_task(submission, step, result)
+
+        elif step.step_kind == StepKind.THEORY:
+            pass
+        elif step.step_kind == StepKind.TEST:
+            pass
 
         return response
 
-    async def create_old(self, submission: SubmissionCreate):
-        try:
-            result = process_submission.delay(submission["submitted_answer"]).get(
-                timeout=3
+    async def _get_step(self, step_id):
+        async with self.transaction_manager:
+            return await self.transaction_manager.step.find_one_or_none(
+                ignore_published_status=True, id=step_id
             )
-            main_logger.info(f"result is {result}")
-            return {"result": result}
-
-        except Exception as e:
-            main_logger.info(f"Exception is  {e}")
-            return {"result": "The waiting time has been exceeded"}
 
     async def _get_result_of_coding_task(self, submitted_answer: str) -> str:
         try:
@@ -69,3 +48,32 @@ class SubmissionsService(BaseService):
         except Exception as e:
             main_logger.info(f"Exception is  {e}")
             return "The waiting time has been exceeded"
+
+    async def _update_user_progress(self, submission: dict, step: Step) -> None:
+        await self.transaction_manager.userprogress.get_or_create_progress(
+            user_id=submission["student_id"],
+            course_id=step.course_id,
+            lesson_id=step.lesson_id,
+            step_id=step.id,
+            is_completed=True,
+            сompleted_at=datetime.now(),
+        )
+
+    async def _handle_coding_task(
+        self, submission: dict, step: Step, result: str
+    ) -> dict:
+        coding_task = step.coding_task
+        is_correct = False
+
+        if (
+            coding_task.test_type == TestType.SIMPLE
+            and result == coding_task.simple_test_expected_output
+        ):
+            is_correct = True
+            submission.update({"is_correct": True})
+            await self._update_user_progress(submission, step)
+
+        elif coding_task.test_type == TestType.ADVANCED:
+            pass
+
+        return {"result": result, "is_correct": is_correct}
