@@ -60,10 +60,9 @@ def create_subprocess(program: list[str]):
     process = Popen(program, stdout=PIPE, stderr=PIPE)
 
     stdout, stderr = process.communicate()
-
-    if stdout is not None:
+    if stdout:
         return stdout.decode()
-    elif stderr is not None:
+    elif stderr:
         return stderr.decode()
     else:
         return "Процесс не вернул вывода."

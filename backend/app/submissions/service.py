@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 from app.submissions.schemas import SubmissionCreate
 from app.steps.models import CodingTask, TestType
-from app.tasks.submission_tasks import process_submission
+from app.tasks.submission_tasks import process_submission, process_submission_with_advanced_test_code
 from app.users.models import User
 from app.utils.logger import main_logger
 from app.utils.service import BaseService
@@ -41,9 +41,12 @@ class SubmissionsService(BaseService):
                 ignore_published_status=True, id=step_id
             )
 
-    async def _get_result_of_coding_task(self, submitted_answer: str) -> str:
+    async def _get_result_of_coding_task(self, submitted_answer: str, advanced_test_code: str = "") -> str:
         try:
-            result: str = process_submission.delay(submitted_answer).get(timeout=3)
+            if advanced_test_code:
+                result: str = process_submission_with_advanced_test_code.delay(submitted_answer, advanced_test_code).get(timeout=3)
+            else:
+                result: str = process_submission.delay(submitted_answer).get(timeout=3)
             main_logger.info(f"result is {result}")
             return result
 
@@ -67,18 +70,20 @@ class SubmissionsService(BaseService):
         main_logger.info(
             f"coding_task.advanced is {coding_task.advanced_test_code == ""}"
         )
-        result = await self._get_result_of_coding_task(submission["submitted_answer"])
         is_correct = False
 
-        if (
-            coding_task.test_type == TestType.SIMPLE
-            and result == coding_task.simple_test_expected_output
-        ):
-
-            is_correct = True
-            await self._update_user_progress(submission, step)
+            
+        if coding_task.test_type == TestType.SIMPLE:
+            result = await self._get_result_of_coding_task(submission["submitted_answer"])
+            
+            if result == coding_task.simple_test_expected_output:  
+                is_correct = True
+                await self._update_user_progress(submission, step)
 
         elif coding_task.test_type == TestType.ADVANCED:
-            pass
-
+            result = await self._get_result_of_coding_task(submission["submitted_answer"], coding_task.advanced_test_code)
+            if result.endswith("OK"):
+                is_correct = True
+            else:
+                is_correct = False
         return {"result": result, "is_correct": is_correct}
