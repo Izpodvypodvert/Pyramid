@@ -37,10 +37,10 @@ class TheoryUpdate(TheoryCreate):
 class CodingTaskCreate(BaseModel):
     step_id: int
     instructions: str
-    starter_code: str
-    solution_code: str
-    simple_test_expected_output: str
-    advanced_test_code: str
+    starter_code: str = ""
+    solution_code: str = ""
+    simple_test_expected_output: str = ""
+    advanced_test_code: str = ""
     test_type: TestType
     points: int
 
