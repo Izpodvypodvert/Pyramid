@@ -17,7 +17,7 @@ class Submission(SQLModel, table=True):
     submitted_answer: str
     is_correct: bool = False
     points_awarded: int = 0
-    submitted_at: datetime = Field(default_factory=datetime.utcnow)
+    submitted_at: datetime = Field(default_factory=datetime.now)
 
     step: "Step" = Relationship(back_populates="submissions")
     student: "User" = Relationship(back_populates="submissions")

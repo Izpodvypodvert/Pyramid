@@ -32,7 +32,8 @@ class SubmissionsService(BaseService):
             pass
 
         elif step.step_kind == StepKind.THEORY:
-            pass
+            await self._update_user_progress(submission, step)
+            response["result"] = "The theory has been successfully completed."
 
         submission.update({"is_correct": response["is_correct"]})
         await self.repository.insert_data(**submission)
@@ -83,7 +84,7 @@ class SubmissionsService(BaseService):
             return await self._handle_simple_test(submission, coding_task, step)
 
         elif coding_task.test_type == TestType.ADVANCED:
-            return await self._handle_advanced_test(submission, coding_task)
+            return await self._handle_advanced_test(submission, coding_task, step)
 
         return {"result": "Unknown CodingTask type", "is_correct": False}
 
@@ -97,12 +98,13 @@ class SubmissionsService(BaseService):
         return {"result": result, "is_correct": False}
 
     async def _handle_advanced_test(
-        self, submission: dict, coding_task: CodingTask
+        self, submission: dict, coding_task: CodingTask, step: Step
     ) -> dict[str, bool]:
         result = await self._get_result_of_coding_task(
             submission["submitted_answer"], coding_task.advanced_test_code
         )
         if result.endswith("OK"):
+            await self._update_user_progress(submission, step)
             return {"result": "OK", "is_correct": True}
 
         return {"result": self._extract_error_or_exception(result), "is_correct": False}
