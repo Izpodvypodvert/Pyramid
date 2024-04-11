@@ -37,7 +37,8 @@ class SubmissionsService(BaseService):
             response["result"] = "Error: Unhandled step kind."
 
         submission.update({"is_correct": response["is_correct"]})
-        await self.repository.insert_data(**submission)
+        async with self.transaction_manager:
+            await self.repository.insert_data(**submission)
 
         return response
 
@@ -65,14 +66,15 @@ class SubmissionsService(BaseService):
             return "The waiting time has been exceeded"
 
     async def _update_user_progress(self, submission: dict, step: Step) -> None:
-        await self.transaction_manager.userprogress.get_or_create_progress(
-            user_id=submission["student_id"],
-            course_id=step.course_id,
-            lesson_id=step.lesson_id,
-            step_id=step.id,
-            is_completed=True,
-            сompleted_at=datetime.now(),
-        )
+        async with self.transaction_manager:
+            await self.transaction_manager.userprogress.get_or_create_progress(
+                user_id=submission["student_id"],
+                course_id=step.course_id,
+                lesson_id=step.lesson_id,
+                step_id=step.id,
+                is_completed=True,
+                completed_at=datetime.now(),
+            )
 
     async def _handle_coding_task(
         self, submission: dict, step: Step

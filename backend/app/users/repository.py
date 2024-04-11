@@ -1,6 +1,7 @@
 from sqlmodel import select
 from app.utils.repository import SQLModelRepository
 from app.users.models import ProgressType, User, UserProgress
+from app.utils.logger import main_logger
 
 
 class UserProgressRepository(SQLModelRepository):
