@@ -2,7 +2,7 @@ from datetime import datetime
 import re
 from typing import Optional
 from app.submissions.schemas import SubmissionCreate
-from app.steps.models import CodingTask, TestType
+from app.steps.models import CodingTask, Test, TestType
 from app.tasks.submission_tasks import (
     process_submission,
     process_submission_with_advanced_test_code,
@@ -25,15 +25,16 @@ class SubmissionsService(BaseService):
 
         response = {"result": "", "is_correct": False}
 
-        if step.step_kind == StepKind.CODING_TASK:
-            response = await self._handle_coding_task(submission, step)
+        step_handlers = {
+            StepKind.CODING_TASK: self._handle_coding_task,
+            StepKind.TEST: self._handle_test,
+            StepKind.THEORY: self._handle_theory,
+        }
 
-        elif step.step_kind == StepKind.TEST:
-            pass
-
-        elif step.step_kind == StepKind.THEORY:
-            await self._update_user_progress(submission, step)
-            response["result"] = "The theory has been successfully completed."
+        if step.step_kind in step_handlers:
+            response = await step_handlers[step.step_kind](submission, step)
+        else:
+            response["result"] = "Error: Unhandled step kind."
 
         submission.update({"is_correct": response["is_correct"]})
         await self.repository.insert_data(**submission)
@@ -87,6 +88,33 @@ class SubmissionsService(BaseService):
             return await self._handle_advanced_test(submission, coding_task, step)
 
         return {"result": "Unknown CodingTask type", "is_correct": False}
+
+    async def _handle_test(self, submission: dict, step: Step):
+        correct_test_choice = next(
+            (choice for choice in step.test.test_choices if choice.is_correct), None
+        )
+
+        if correct_test_choice is None:
+            return {
+                "result": "Error: Test configuration issue. Don't forget to set a correct TestChoice.",
+                "is_correct": False,
+            }
+
+        is_correct = correct_test_choice.id == int(submission["submitted_answer"])
+        if is_correct:
+            await self._update_user_progress(submission, step)
+
+        return {
+            "result": "Correct answer!" if is_correct else "Incorrect answer.",
+            "is_correct": is_correct,
+        }
+
+    async def _handle_theory(self, submission: dict, step: Step):
+        await self._update_user_progress(submission, step)
+        return {
+            "result": "The theory has been successfully completed.",
+            "is_correct": True,
+        }
 
     async def _handle_simple_test(
         self, submission: dict, coding_task: CodingTask, step: Step

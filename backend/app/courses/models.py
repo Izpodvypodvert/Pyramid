@@ -70,13 +70,13 @@ class Step(HashMixin, SQLModel, table=True):
     course: "Course" = Relationship(back_populates="steps")
     lesson: "Lesson" = Relationship(back_populates="steps")
     theory: Optional["Theory"] = Relationship(
-        back_populates="step", sa_relationship_kwargs={"lazy": "joined"}
+        back_populates="step", sa_relationship_kwargs={"lazy": "selectin"}
     )
     coding_task: Optional["CodingTask"] = Relationship(
-        back_populates="step", sa_relationship_kwargs={"lazy": "joined"}
+        back_populates="step", sa_relationship_kwargs={"lazy": "selectin"}
     )
     test: Optional["Test"] = Relationship(
-        back_populates="step", sa_relationship_kwargs={"lazy": "joined"}
+        back_populates="step", sa_relationship_kwargs={"lazy": "selectin"}
     )
     submissions: list["Submission"] = Relationship(back_populates="step")
     user_progress: list["UserProgress"] = Relationship(back_populates="step")

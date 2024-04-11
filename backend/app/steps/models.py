@@ -43,7 +43,7 @@ class Test(SQLModel, table=True):
 
     step: "Step" = Relationship(back_populates="test")
     test_choices: list["TestChoice"] = Relationship(
-        back_populates="test", sa_relationship_kwargs={"lazy": "joined"}
+        back_populates="test", sa_relationship_kwargs={"lazy": "selectin"}
     )
 
 
