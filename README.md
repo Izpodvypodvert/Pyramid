@@ -22,6 +22,4 @@
 
 ## TODO
 
--   Разобраться  с маршрутами с parent_id
-
 -   Написать логику lessons Progress 
