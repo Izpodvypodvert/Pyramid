@@ -9,16 +9,6 @@ from app.users.models import User
 from app.utils.exceptions import OpenAPIDocExtraResponse
 
 
-# submission_router = BaseRouter(
-#     model=Submission,
-#     model_create=SubmissionCreate,
-#     model_update=Submission,
-#     service=SubmissionsServiceDep,
-#     prefix="/submissions",
-#     tags=["submissions"],
-# ).router
-
-
 submission_router = APIRouter(prefix="/submissions", tags=["submissions"])
 
 

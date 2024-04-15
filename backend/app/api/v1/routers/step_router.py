@@ -2,10 +2,10 @@ from app.courses.models import Step
 from app.users.dependencies import current_user
 from app.courses.dependencies import StepsServiceDep
 from app.courses.schemas import StepCreate, StepUpdate
-from app.api.v1.routers.base_router import BaseRouterWithUser
+from app.api.v1.routers.base_router import ParentItemRouterWithUser
 
 
-step_router = BaseRouterWithUser(
+step_router = ParentItemRouterWithUser(
     model=Step,
     model_create=StepCreate,
     model_update=StepUpdate,

@@ -2,6 +2,7 @@ from fastapi import Depends, HTTPException, status
 from app.users.dependencies import current_user
 from app.users.models import User
 from app.utils.router import BaseRouter
+from app.utils.logger import main_logger
 
 
 class BaseRouterWithUser(BaseRouter):
@@ -11,10 +12,6 @@ class BaseRouterWithUser(BaseRouter):
         async def get_items(service: self.service, user: User = Depends(current_user)):
             return await service.get_all(user)
 
-        @self.router.get("/{parent_id}", response_model=list[self.model])
-        async def get_items_by_parent_id(parent_id: int, service: self.service,  user: User = Depends(current_user)):
-            return await service.get_all_by_id(user, parent_id)
-        
         @self.router.get("/{item_id}", response_model=self.model)
         async def get_item(
             item_id: int, service: self.service, user: User = Depends(current_user)
@@ -55,3 +52,16 @@ class BaseRouterWithUser(BaseRouter):
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="Item not found or unauthorized access",
                 )
+
+
+class ParentItemRouterWithUser(BaseRouterWithUser):
+
+    def _create_routes(self):
+        super()._create_routes()
+
+        @self.router.get("/parent/{parent_id}", response_model=list[self.model])
+        async def get_items_by_parent_id(
+            parent_id: int, service: self.service, user: User = Depends(current_user)
+        ):
+            main_logger.info(f"приветики от нормиса")
+            return await service.get_all_by_id(user, parent_id)
