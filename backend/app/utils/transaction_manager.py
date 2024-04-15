@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Annotated
+from typing import Annotated, Protocol
 
 from fastapi import Depends
 from app.core.db import AsyncSessionLocal as async_session_maker
@@ -17,6 +17,7 @@ from app.steps.repository import (
     TestChoiceRepository,
 )
 from app.submissions.repository import SubmissionRepository
+from app.users.repository import UserProgressRepository
 
 
 class ITransactionManager(ABC):
@@ -24,6 +25,15 @@ class ITransactionManager(ABC):
     for working with transactions to the database"""
 
     course: CourseRepository
+    topic: TopicRepository
+    lesson: LessonRepository
+    step: StepRepository
+    theory: TheoryRepository
+    codingtask: CodingTaskRepository
+    test: TestRepository
+    testchoice: TestChoiceRepository
+    submission: SubmissionRepository
+    userprogress: UserProgressRepository
 
     @abstractmethod
     def __init__(self): ...
@@ -60,6 +70,8 @@ class TransactionManager(ITransactionManager):
         self.testchoice = TestChoiceRepository(self.session)
 
         self.submission = SubmissionRepository(self.session)
+
+        self.userprogress = UserProgressRepository(self.session)
 
         return self
 

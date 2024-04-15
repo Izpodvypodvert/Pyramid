@@ -12,6 +12,12 @@ class CoursesBaseSQLModelRepository(SQLModelRepository):
         statement = select(self.model).filter_by(**filter_by)
         if not ignore_published_status:
             statement = statement.filter(self.model.is_published == True)
+        #     statement = statement.options(
+        #     selectinload(self.model.theory),
+        #     selectinload(self.model.coding_task),
+        #     selectinload(self.model.test),
+
+        # )
         result = await self.session.exec(statement)
         return result.first()
 

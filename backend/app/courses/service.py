@@ -1,10 +1,11 @@
 from pydantic import UUID4
 from sqlmodel import SQLModel
+from app.courses.models import Topic, Lesson, Step
 from app.utils.service import BaseService
 from app.utils.mixins import AuthorshipMixin
 from app.users.models import User
 from app.utils.exceptions import IncorrectIdException
-from app.utils.logger import services_logger
+from app.utils.logger import main_logger
 from app.users.schemas import UserUpdate
 
 
@@ -14,7 +15,14 @@ class BaseServiceWithAuthorship[T](AuthorshipMixin, BaseService):
     Administrators can receive any entities, authors can receive their own entities and published ones,
     regular users are only published entities."""
 
+    _PARENTS = {
+        Topic: "course_id",
+        Lesson: "topic_id",
+        Step: "lesson_id",
+    }
+
     async def get_all(self, user: User) -> list[T] | None:
+
         async with self.transaction_manager:
             if user.is_superuser:
                 return await self.repository.find_all(ignore_published_status=True)
@@ -29,6 +37,28 @@ class BaseServiceWithAuthorship[T](AuthorshipMixin, BaseService):
                 return list(set(user_courses + published_courses))
 
             return await self.repository.find_all()
+
+    async def get_all_by_id(self, user: User, parent_id: int) -> list[T] | None:
+        field_name = self._PARENTS.get(self.entity_type)
+        kwargs = {field_name: parent_id}
+        async with self.transaction_manager:
+            if user.is_superuser:
+                return await self.repository.find_all(
+                    ignore_published_status=True, **kwargs
+                )
+
+            if user.is_author:
+                user_courses = await self.repository.find_all(
+                    author_id=user.id, ignore_published_status=True, **kwargs
+                )
+
+                published_courses = await self.repository.find_all(
+                    is_published=True, **kwargs
+                )
+
+                return list(set(user_courses + published_courses))
+
+            return await self.repository.find_all(**kwargs)
 
     async def get_by_id(self, entity_id, user: User) -> T | None:
         async with self.transaction_manager:
@@ -69,13 +99,15 @@ class BaseServiceWithAuthorship[T](AuthorshipMixin, BaseService):
 
     async def create(self, item: T, user: User) -> T:
         async with self.transaction_manager:
-            created_item = await self.repository.insert_data(**item.model_dump())
+            data = item.model_dump()
+            data["author_id"] = user.id
+            created_item = await self.repository.insert_data(**data)
 
             if user and not user.is_author:
                 full_user = await self.user_manager.get(user.id)
                 if full_user:
                     user_update_data = UserUpdate(is_author=True)
-                    services_logger.warning(user_update_data)
+
                     await self.user_manager.update(
                         user_update_data, full_user, safe=True
                     )

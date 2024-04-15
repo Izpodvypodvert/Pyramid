@@ -1,9 +1,12 @@
-from typing import Type
+from typing import TYPE_CHECKING, Type
 
 from app.utils.transaction_manager import ITransactionManager
+
 from app.utils.exceptions import IncorrectIdException, MissingRepositoryError
-from app.users.dependencies import UserManager
-from app.utils.logger import services_logger
+
+
+if TYPE_CHECKING:
+    from app.users.dependencies import UserManager
 
 
 class BaseService[T]:
@@ -11,7 +14,7 @@ class BaseService[T]:
         self,
         entity_type: Type[T],
         transaction_manager: ITransactionManager,
-        user_manager: UserManager,
+        user_manager: "UserManager",
     ):
         self.entity_type = entity_type
         self.transaction_manager = transaction_manager

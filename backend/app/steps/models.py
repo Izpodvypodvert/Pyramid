@@ -18,7 +18,7 @@ class Theory(SQLModel, table=True):
     step_id: int = Field(foreign_key="step.id")
     content: str
 
-    step: "Step" = Relationship(back_populates="theories")
+    step: "Step" = Relationship(back_populates="theory")
 
 
 class CodingTask(SQLModel, table=True):
@@ -32,7 +32,7 @@ class CodingTask(SQLModel, table=True):
     test_type: TestType
     points: int
 
-    step: "Step" = Relationship(back_populates="coding_tasks")
+    step: "Step" = Relationship(back_populates="coding_task")
 
 
 class Test(SQLModel, table=True):
@@ -41,8 +41,10 @@ class Test(SQLModel, table=True):
     question: str
     points: int
 
-    step: "Step" = Relationship(back_populates="tests")
-    test_choices: list["TestChoice"] = Relationship(back_populates="test")
+    step: "Step" = Relationship(back_populates="test")
+    test_choices: list["TestChoice"] = Relationship(
+        back_populates="test", sa_relationship_kwargs={"lazy": "selectin"}
+    )
 
 
 class TestChoice(SQLModel, table=True):

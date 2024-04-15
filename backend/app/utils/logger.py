@@ -28,13 +28,17 @@ def setup_logger(name, log_file, level=logging.INFO):
 
     return logger
 
+main_logger = setup_logger(
+    "main_logger", "logs/main_logger.log", level=logging.INFO
+)
+
 
 services_logger = setup_logger(
-    "services_logger", "services_logger.log", level=logging.WARNING
+    "services_logger", "logs/services_logger.log", level=logging.WARNING
 )
 
 utils_repository_logger = setup_logger(
-    "utils_repository_logger", "utils_repository_logger.log"
+    "utils_repository_logger", "logs/utils_repository_logger.log"
 )
 
 
