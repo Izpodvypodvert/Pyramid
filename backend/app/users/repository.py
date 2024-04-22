@@ -17,6 +17,19 @@ class UserProgressRepository(SQLModelRepository):
 
         return progress.all()
 
+    async def get_user_completed_steps_progress(
+        self, lesson_id: int, user: User
+    ) -> list[UserProgress]:
+        statement = select(self.model).where(
+            self.model.lesson_id == lesson_id,
+            self.model.user_id == user.id,
+            self.model.is_completed == True,
+            self.model.progress_type == ProgressType.STEP,
+        )
+        progress = await self.session.exec(statement)
+
+        return progress.all()
+
     async def get_user_lessons_progress(self, user: User) -> list[UserProgress]:
         statement = select(self.model).where(
             self.model.user_id == user.id,
