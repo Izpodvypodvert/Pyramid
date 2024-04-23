@@ -7,7 +7,7 @@ from app.tasks.submission_tasks import (
     process_submission,
     process_submission_with_advanced_test_code,
 )
-from app.users.models import User
+from app.users.models import ProgressType, User
 from app.utils.logger import main_logger
 from app.utils.service import BaseService
 from app.courses.models import Step, StepKind
@@ -67,7 +67,24 @@ class SubmissionsService(BaseService):
 
     async def _update_user_progress(self, submission: dict, step: Step) -> None:
         async with self.transaction_manager:
-            await self.transaction_manager.userprogress.get_or_create_progress(
+            count_of_completed_steps = await self.transaction_manager.userprogress.get_user_completed_steps_progress(
+                step.lesson_id, submission["student_id"]
+            )
+
+            steps_count = await self.transaction_manager.step.find_all(
+                ignore_published_status=True, lesson_id=step.lesson_id
+            )
+            if len(count_of_completed_steps) == len(steps_count):
+                await self.transaction_manager.userprogress.get_or_create_lesson_progress(
+                    user_id=submission["student_id"],
+                    course_id=step.course_id,
+                    lesson_id=step.lesson_id,
+                    is_completed=True,
+                    completed_at=datetime.now(),
+                    progress_type=ProgressType.LESSON,
+                )
+
+            await self.transaction_manager.userprogress.get_or_create_step_progress(
                 user_id=submission["student_id"],
                 course_id=step.course_id,
                 lesson_id=step.lesson_id,
