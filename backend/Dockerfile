@@ -1,6 +1,5 @@
 FROM python:3.12.1-slim
 
-# Установите poetry
 RUN pip install --no-cache-dir --upgrade pip poetry
 
 RUN poetry config virtualenvs.create false
