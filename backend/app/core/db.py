@@ -13,15 +13,7 @@ engine = create_async_engine(DATABASE_URL, echo=False, future=True)
 
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
-# engine = create_async_engine(DATABASE_URL, echo=False, future=True)
-# async_session_maker = async_sessionmaker(bind=engine, expire_on_commit=False)
-
 
 async def get_async_session():
     async with AsyncSessionLocal() as async_session:
         yield async_session
-
-
-# async def get_async_session():
-#     async with async_session_maker() as async_session:
-#         yield async_session
