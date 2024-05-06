@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     test_postgres_user: str = ""
     test_postgres_password: str = ""
     postgres_test_db: str = ""
+    test_host: str = ""
     test_database_url: str = ""
 
     secret: str = ""

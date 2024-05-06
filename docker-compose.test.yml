@@ -1,12 +1,22 @@
 version: "3.8"
 
 services:
+    backend_tests:
+        container_name: backend_tests
+        build: 
+            dockerfile: ./backend/tests/Dockerfile
+        command: bash -c "cd backend && poetry run pytest ./tests"
+        volumes:
+            - .:/app
+        depends_on:
+        - test_db 
+
     test_db:
+        container_name: test_db
         image: postgres:15.3
         ports:
-            - "5433:5432"
+            - "5432:5432"
+        env_file:
+            ./backend/.env
         environment:
-            - POSTGRES_USER=${TEST_POSTGRES_USER}
-            - POSTGRES_PASSWORD=${TEST_POSTGRES_PASSWORD}
-            - POSTGRES_DB=${POSTGRES_TEST_DB}
-        command: ["postgres", "-c", "log_statement=all"] # docker compose logs postgres (тут будут логи)
+            - DATABASE_URL=${TEST_DATABASE_URL}
