@@ -1,4 +1,3 @@
-from typing import AsyncGenerator
 import pytest_asyncio
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import Field, select, SQLModel
