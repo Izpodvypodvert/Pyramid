@@ -5,9 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 
 
-TEST = settings.test
-
-DATABASE_URL = settings.test_database_url if TEST else settings.database_url
+DATABASE_URL = settings.test_database_url if settings.test else settings.database_url
 
 engine = create_async_engine(DATABASE_URL, echo=False, future=True)
 
