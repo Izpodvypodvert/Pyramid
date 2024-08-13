@@ -1,16 +1,21 @@
 version: "3.8"
 
 services:
-    backend_tests:
-        container_name: backend_tests
+    backend:
+        container_name: backend
         build: 
-            dockerfile: ./backend/tests/Dockerfile
-        command: bash -c "cd backend && poetry run pytest ./tests"
+            dockerfile: ./backend/Dockerfile
+        command: bash -c "cd backend && poetry run alembic upgrade head && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
         volumes:
             - .:/app
+        ports:
+            - 8000:8000
+        restart: always
         depends_on:
-        - test_db 
-
+            - test_db
+        environment:
+            - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+            - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
     test_db:
         container_name: test_db
         image: postgres:15.3
@@ -19,4 +24,55 @@ services:
         env_file:
             ./backend/.env
         environment:
-            - DATABASE_URL=${TEST_DATABASE_URL}
+            - POSTGRES_USER=${TEST_POSTGRES_USER}
+            - POSTGRES_PASSWORD=${TEST_POSTGRES_PASSWORD}
+            - POSTGRES_DB=${POSTGRES_TEST_DB}
+
+    redis:
+        image: redis:latest
+        restart: always
+        ports:
+            - "6379:6379"
+
+    rabbitmq:
+        container_name: rabbitmq_container
+        image: rabbitmq:3.10.7-management
+        restart: always
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+        env_file:
+            ./backend/.env
+        environment:
+            - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+            - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+            - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
+    celery_worker:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: celery -A app.tasks.celery_app worker -l debug
+        depends_on:
+            - redis
+            - rabbitmq
+        volumes:
+            - ./backend/app/tasks:/app/app/tasks
+            - /var/run/docker.sock:/var/run/docker.sock
+            - shared_vol:/app
+        environment:
+            - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+            - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+
+
+    backend_tests:
+        container_name: backend_tests
+        build: 
+            dockerfile: ./backend/tests/Dockerfile
+        command: bash -c "sleep 3 && cd backend && poetry run pytest ./tests"
+        volumes:
+            - .:/app
+        depends_on:
+            - backend
+
+volumes:
+    shared_vol:

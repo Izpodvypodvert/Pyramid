@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     host: str = ""
     localhost: str = ""
     database_url: str = ""
-    test: bool = False
+    test: bool = True
 
     test_postgres_user: str = ""
     test_postgres_password: str = ""
