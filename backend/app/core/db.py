@@ -9,9 +9,9 @@ DATABASE_URL = settings.test_database_url if settings.test else settings.databas
 
 engine = create_async_engine(DATABASE_URL, echo=False, future=True)
 
-AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
 async def get_async_session():
-    async with AsyncSessionLocal() as async_session:
+    async with async_session_maker() as async_session:
         yield async_session

@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Annotated, Protocol
+from typing import Annotated
 
 from fastapi import Depends
-from app.core.db import AsyncSessionLocal as async_session_maker
+from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.core.db import async_session_maker
 from app.courses.repository import (
     CourseRepository,
     LessonRepository,
@@ -58,7 +59,7 @@ class TransactionManager(ITransactionManager):
         self.session_factory = session_factory
 
     async def __aenter__(self):
-        self.session = self.session_factory()
+        self.session: AsyncSession = self.session_factory()
         self.course = CourseRepository(self.session)
         self.topic = TopicRepository(self.session)
         self.lesson = LessonRepository(self.session)

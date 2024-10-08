@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Type
 from app.utils.transaction_manager import ITransactionManager
 
 from app.utils.exceptions import IncorrectIdException, MissingRepositoryError
+from app.utils.repository import AbstractRepository
 
 
 if TYPE_CHECKING:
@@ -18,7 +19,7 @@ class BaseService[T]:
     ):
         self.entity_type = entity_type
         self.transaction_manager = transaction_manager
-        self._repository = None
+        self._repository: AbstractRepository = None
         self.user_manager = user_manager
 
     @property

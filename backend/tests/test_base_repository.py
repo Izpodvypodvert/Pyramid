@@ -1,6 +1,6 @@
 import pytest_asyncio
 from sqlmodel.ext.asyncio.session import AsyncSession
-from sqlmodel import Field, select, SQLModel
+from sqlmodel import Field, SQLModel
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -23,10 +23,10 @@ async def repo():
     engine = create_async_engine(DATABASE_URL, echo=False, future=True)
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
-    AsyncSessionLocal = sessionmaker(
+    async_session_maker = sessionmaker(
         engine, class_=AsyncSession, expire_on_commit=False
     )
-    async with AsyncSessionLocal() as session:
+    async with async_session_maker() as session:
         repository = SQLModelRepository(session=session)
         repository.model = BaseModel
         yield repository
