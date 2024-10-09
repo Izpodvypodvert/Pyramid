@@ -2,7 +2,6 @@ from fastapi import Depends, HTTPException, status
 from app.users.dependencies import current_user
 from app.users.models import User
 from app.utils.router import BaseRouter
-from app.utils.logger import main_logger
 
 
 class BaseRouterWithUser(BaseRouter):
