@@ -6,6 +6,20 @@ from app.utils.logger import main_logger
 
 
 class BaseRouterWithUser(BaseRouter):
+    """
+    A specialized router class that extends BaseRouter with user-dependent CRUD operations.
+    It includes user authentication and authorization in all CRUD operations.
+
+    Attributes:
+    - model (Type[BaseModel]): The Pydantic model for read operations.
+    - model_create (Type[BaseModel]): The Pydantic model for create operations.
+    - model_update (Type[BaseModel]): The Pydantic model for update operations.
+    - service_dependency (Callable[..., AbstractService]): A callable that provides an instance
+      of a service implementing AbstractService.
+    - prefix (str): The URL prefix for the router (e.g., "/items").
+    - tags (list[str]): Tags for categorizing the routes in API documentation.
+    - current_user (User): Dependency that provides the currently authenticated user.
+    """
 
     def _create_routes(self):
         @self.router.get("/", response_model=list[self.model])
@@ -55,7 +69,13 @@ class BaseRouterWithUser(BaseRouter):
 
 
 class ParentItemRouterWithUser(BaseRouterWithUser):
+    """
+    A router class that extends BaseRouterWithUser with additional routes for retrieving items
+    associated with a specific parent entity, allowing more complex nested structures.
 
+    Methods:
+    - get_items_by_parent_id: Retrieves a list of items associated with a given parent ID for the current user.
+    """
     def _create_routes(self):
         super()._create_routes()
 
@@ -63,5 +83,4 @@ class ParentItemRouterWithUser(BaseRouterWithUser):
         async def get_items_by_parent_id(
             parent_id: int, service: self.service, user: User = Depends(current_user)
         ):
-            main_logger.info(f"приветики от нормиса")
             return await service.get_all_by_id(user, parent_id)

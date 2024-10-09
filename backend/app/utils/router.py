@@ -41,6 +41,14 @@ class BaseRouter[T, S, G, V]:
         self._create_routes()
 
     def _create_routes(self):
+        """
+        Sets up the standard CRUD API routes for the router:
+        - GET /: Retrieve a list of all items.
+        - GET /{item_id}: Retrieve a single item by its ID.
+        - POST /: Create a new item.
+        - PUT /{item_id}: Update an existing item by its ID.
+        - DELETE /{item_id}: Delete an item by its ID.
+        """
         @self.router.get("/", response_model=list[self.model])
         async def get_items(service: self.service):
             return await service.get_all()
