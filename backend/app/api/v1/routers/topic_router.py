@@ -2,7 +2,7 @@ from app.courses.models import Topic
 from app.users.dependencies import current_user
 from app.courses.dependencies import TopicsServiceDep
 from app.courses.schemas import TopicCreate, TopicUpdate
-from app.api.v1.routers.base_router import ParentItemRouterWithUser
+from app.core.router import ParentItemRouterWithUser
 
 
 topic_router = ParentItemRouterWithUser(

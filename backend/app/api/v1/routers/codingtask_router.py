@@ -2,7 +2,7 @@ from app.steps.models import CodingTask
 
 from app.steps.dependencies import CodingTasksServiceDep
 from app.steps.schemas import CodingTaskCreate, CodingTaskUpdate
-from app.api.v1.routers.base_router import ParentItemRouterWithUser
+from app.core.router import ParentItemRouterWithUser
 
 
 coding_task_router = ParentItemRouterWithUser(

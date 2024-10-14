@@ -2,7 +2,7 @@ from app.steps.models import Test
 
 from app.steps.dependencies import TestsServiceDep
 from app.steps.schemas import TestCreate, TestUpdate
-from app.api.v1.routers.base_router import ParentItemRouterWithUser
+from app.core.router import ParentItemRouterWithUser
 
 
 test_router = ParentItemRouterWithUser(

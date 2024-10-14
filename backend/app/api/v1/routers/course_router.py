@@ -1,7 +1,7 @@
 from app.courses.models import Course
 from app.courses.dependencies import CoursesServiceDep
 from app.courses.schemas import CourseCreate, CourseUpdate
-from app.api.v1.routers.base_router import BaseRouterWithUser
+from app.core.router import BaseRouterWithUser
 
 
 course_router = BaseRouterWithUser(

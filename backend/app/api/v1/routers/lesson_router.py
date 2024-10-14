@@ -1,7 +1,7 @@
 from app.courses.dependencies import LessonsServiceDep
 from app.courses.models import Lesson
 from app.courses.schemas import LessonCreate, LessonUpdate
-from app.api.v1.routers.base_router import ParentItemRouterWithUser
+from app.core.router import ParentItemRouterWithUser
 
 
 lesson_router = ParentItemRouterWithUser(
