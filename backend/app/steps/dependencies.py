@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import Depends
 
-from app.utils.transaction_manager import TManagerDep
+from app.core.transaction_manager import TManagerDep
 from app.users.dependencies import UserManager, get_user_manager
 from app.steps.service import (
     CodingTasksService,

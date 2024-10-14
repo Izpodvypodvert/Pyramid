@@ -1,7 +1,9 @@
 from sqlmodel import SQLModel
+
+from app.core.service import BaseService
 from app.steps.models import Theory, CodingTask, Test, TestChoice
 from app.users.models import User
-from app.utils.service import BaseService
+
 
 
 class StepsRelatedBaseService[T](BaseService):

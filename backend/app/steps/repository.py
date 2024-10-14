@@ -1,4 +1,4 @@
-from app.utils.repository import SQLModelRepository
+from app.core.repository import SQLModelRepository
 from app.steps.models import Theory, CodingTask, Test, TestChoice
 
 

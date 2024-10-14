@@ -1,10 +1,11 @@
 from typing import Annotated
 from fastapi import Depends
-from app.submissions.models import Submission
 
+from app.core.transaction_manager import TManagerDep
+from app.submissions.models import Submission
 from app.submissions.service import SubmissionsService
 from app.users.dependencies import UserManager, get_user_manager
-from app.utils.transaction_manager import TManagerDep
+
 
 
 def get_submission_service(

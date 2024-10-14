@@ -3,11 +3,10 @@ from typing import TYPE_CHECKING, Generic, Type, TypeVar
 
 from sqlmodel import SQLModel
 
-from app.utils.transaction_manager import ITransactionManager
-
+from app.core.transaction_manager import ITransactionManager
+from app.core.repository import AbstractRepository
 from app.utils.exceptions import IncorrectIdException, MissingRepositoryError
-from app.utils.repository import AbstractRepository
-from backend.app.users.models import User
+from app.users.models import User
 
 
 if TYPE_CHECKING:

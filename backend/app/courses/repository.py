@@ -1,8 +1,8 @@
 from sqlmodel import select
 
 from app.courses.models import Course, Lesson, Step, Topic
+from app.core.repository import SQLModelRepository
 from app.utils.logger import db_query_logger
-from app.utils.repository import SQLModelRepository
 
 
 class CoursesBaseSQLModelRepository(SQLModelRepository):

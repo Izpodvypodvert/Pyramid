@@ -1,7 +1,8 @@
 from fastapi import Depends, HTTPException, status
+
+from app.core.router import BaseRouter
 from app.users.dependencies import current_user
 from app.users.models import User
-from app.utils.router import BaseRouter
 
 
 class BaseRouterWithUser(BaseRouter):

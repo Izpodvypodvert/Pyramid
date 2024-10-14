@@ -1,4 +1,5 @@
 from pydantic import UUID4
+
 from app.utils.exceptions import UnauthorizedAccessException
 
 

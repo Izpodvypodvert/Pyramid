@@ -1,3 +1,4 @@
+from pydantic import UUID4
 from typing import Annotated, Optional, Union
 
 from fastapi import Depends, Request
@@ -8,21 +9,19 @@ from fastapi_users import (
     InvalidPasswordException,
 )
 from fastapi_users_db_sqlmodel import SQLModelUserDatabaseAsync
-
 from fastapi_users.authentication import (
     AuthenticationBackend,
     BearerTransport,
     JWTStrategy,
 )
-from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.config import settings
 from app.core.db import get_async_session
+from app.core.transaction_manager import TManagerDep
 from app.users.models import User, UserProgress
 from app.users.schemas import UserCreate
 from app.users.service import UserProgressService
-from app.utils.transaction_manager import TManagerDep
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):

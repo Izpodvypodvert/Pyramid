@@ -1,11 +1,10 @@
 from pydantic import UUID4
 from sqlmodel import SQLModel
 from app.courses.models import Topic, Lesson, Step
-from app.utils.service import BaseService
+from app.core.service import BaseService
 from app.utils.mixins import AuthorshipMixin
 from app.users.models import User
 from app.utils.exceptions import IncorrectIdException
-from app.utils.logger import main_logger
 from app.users.schemas import UserUpdate
 
 

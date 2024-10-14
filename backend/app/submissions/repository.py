@@ -1,6 +1,7 @@
 from sqlmodel import select
+
+from app.core.repository import SQLModelRepository
 from app.submissions.models import Submission
-from app.utils.repository import SQLModelRepository
 from app.users.models import User
 
 

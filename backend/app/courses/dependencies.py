@@ -8,7 +8,7 @@ from app.courses.service import (
     StepsService,
     TopicsService,
 )
-from app.utils.transaction_manager import TManagerDep
+from app.core.transaction_manager import TManagerDep
 from app.users.dependencies import UserManager, get_user_manager
 
 

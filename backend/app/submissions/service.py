@@ -1,17 +1,14 @@
 from datetime import datetime
 import re
-from typing import Optional
-from app.submissions.schemas import SubmissionCreate
-from app.steps.models import CodingTask, Test, TestType
+
+from app.core.service import BaseService
+from app.courses.models import Step, StepKind
+from app.steps.models import CodingTask, TestType
 from app.tasks.submission_tasks import (
     process_submission,
     process_submission_with_advanced_test_code,
 )
 from app.users.models import ProgressType, User
-from app.utils.logger import main_logger
-from app.utils.service import BaseService
-from app.courses.models import Step, StepKind
-from app.utils.transaction_manager import TransactionManager
 
 
 class SubmissionsService(BaseService):
@@ -58,11 +55,9 @@ class SubmissionsService(BaseService):
                 ).get(timeout=3)
             else:
                 result: str = process_submission.delay(submitted_answer).get(timeout=3)
-            main_logger.info(f"result is {result}")
             return result
 
         except Exception as e:
-            main_logger.info(f"Exception is  {e}")
             return "The waiting time has been exceeded"
 
     async def _update_user_progress(self, submission: dict, step: Step) -> None:

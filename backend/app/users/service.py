@@ -1,5 +1,5 @@
+from app.core.service import BaseService
 from app.users.models import User
-from app.utils.service import BaseService
 
 
 class UserProgressService(BaseService):
