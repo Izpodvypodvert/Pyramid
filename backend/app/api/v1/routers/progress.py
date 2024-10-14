@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 
-from app.users.dependencies import current_user, UserProgressServiceDep
+from app.users.auth_config import current_user
+from app.users.dependencies import UserProgressServiceDep
 from app.users.models import User, UserProgress
 
 

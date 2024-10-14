@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from app.users.dependencies import auth_backend, fastapi_users
+from app.users.auth_config import auth_backend, fastapi_users
 from app.users.schemas import UserCreate, UserUpdate, UserRead
 
 

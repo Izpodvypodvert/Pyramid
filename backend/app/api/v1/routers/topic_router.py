@@ -1,5 +1,5 @@
 from app.courses.models import Topic
-from app.users.dependencies import current_user
+from app.users.auth_config import current_user
 from app.courses.dependencies import TopicsServiceDep
 from app.courses.schemas import TopicCreate, TopicUpdate
 from app.core.router import ParentItemRouterWithUser

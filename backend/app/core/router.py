@@ -2,7 +2,7 @@ from typing import Type
 
 from fastapi import APIRouter, HTTPException, status, Depends
 
-from app.users.dependencies import current_user
+from app.users.auth_config import current_user
 from app.utils.exceptions import OpenAPIDocExtraResponse
 from app.users.models import User
 
