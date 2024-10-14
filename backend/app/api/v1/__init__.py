@@ -9,7 +9,7 @@ from app.api.v1.routers.theory_router import theory_router
 from app.api.v1.routers.codingtask_router import coding_task_router
 from app.api.v1.routers.submission_router import submission_router
 from app.api.v1.routers.progress import user_progress_router
-
+from app.api.v1.routers.oauth import router as oauth_router
 
 routers_v1 = [
     user_router,
@@ -22,5 +22,6 @@ routers_v1 = [
     theory_router,
     coding_task_router,
     submission_router,
-    user_progress_router
+    user_progress_router,
+    oauth_router,
 ]

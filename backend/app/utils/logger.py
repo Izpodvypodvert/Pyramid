@@ -41,6 +41,10 @@ utils_repository_logger = setup_logger(
     "utils_repository_logger", "logs/utils_repository_logger.log"
 )
 
+oauth_logger = setup_logger(
+    "oauth_logger", "logs/oauth_logger.log"
+)
+
 
 def db_query_logger(logger=utils_repository_logger):
     def decorator(func):

@@ -1,9 +1,10 @@
 import uuid
 from enum import Enum
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from pydantic import UUID4, EmailStr
 from sqlmodel import SQLModel, Field, Relationship, AutoString
+from fastapi_users_db_sqlmodel import SQLModelBaseOAuthAccount
 
 from app.courses.models import Course, Topic, Lesson, Step
 from app.submissions.models import Submission
@@ -38,9 +39,14 @@ class User(SQLModel, table=True):
     student_courses: list["StudentCourse"] = Relationship(back_populates="student")
     favorites: list["Favorite"] = Relationship(back_populates="student")
     progress: list["UserProgress"] = Relationship(back_populates="user")
+    oauth_accounts: list["OAuthAccount"] = Relationship(back_populates="user")
 
     class Config:
         orm_mode = True
+
+ 
+class OAuthAccount(SQLModelBaseOAuthAccount, table=True):
+    user: Optional[User] = Relationship(back_populates="oauth_accounts")
 
 
 class StudentCourse(SQLModel, table=True):

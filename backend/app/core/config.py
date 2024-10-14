@@ -18,8 +18,14 @@ class Settings(BaseSettings):
 
     secret: str = ""
 
-    rabbitmq_default_user: str
-    rabbitmq_default_pass: str
+    rabbitmq_default_user: str = ""
+    rabbitmq_default_pass: str = ""
+    
+    client_id: str = ""
+    client_secret: str = ""
+    frontend_base_url: str = ""
+    frontend_login_redirect_url: str = ""
+    frontend_oauth_redirect_url: str = ""
 
     class Config:
         env_file = ".env"
