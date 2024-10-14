@@ -14,7 +14,7 @@ oauth.register(
     client_kwargs={"scope": "openid email profile"},
 )
 
-bearer_transport = BearerTransport(tokenUrl="auth/google/callback")
+bearer_transport = BearerTransport(tokenUrl="v1/auth/google/callback")
 
 jwt_strategy = JWTStrategy(secret=settings.secret, lifetime_seconds=3600)
 
