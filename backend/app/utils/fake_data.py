@@ -1,7 +1,7 @@
 import requests
 
 
-API_URL = "http://127.0.0.1:8000"
+API_URL = "http://127.0.0.1:8000/v1"
 REGISTER_URL = f"{API_URL}/auth/register"
 LOGIN_URL = f"{API_URL}/auth/jwt/login"
 FAKE_USER = {"username": "user@example.com", "password": "string"}

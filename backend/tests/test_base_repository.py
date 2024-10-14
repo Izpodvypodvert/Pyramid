@@ -4,7 +4,7 @@ from sqlmodel import Field, SQLModel
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.utils.repository import SQLModelRepository
+from app.core.repository import SQLModelRepository
 from app.core.config import settings
 
 

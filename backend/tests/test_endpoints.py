@@ -3,7 +3,7 @@ from faker import Faker
 import aiohttp
 import pytest_asyncio
 
-API_URL = "http://backend:8000"
+API_URL = "http://backend:8000/v1"
 REGISTER_URL = f"{API_URL}/auth/register"
 LOGIN_URL = f"{API_URL}/auth/jwt/login"
 
