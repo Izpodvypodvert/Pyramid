@@ -29,7 +29,7 @@ RUN pip install redis celery flower
 # Копирование задач в контейнер
 WORKDIR /app
 
-COPY backend/app/tasks /app/app/tasks
+COPY app/tasks /app/app/tasks
 # COPY /backend/ /app/
 
 CMD ["tail", "-f", "/dev/null"]

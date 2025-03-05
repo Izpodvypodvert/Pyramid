@@ -2,6 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    project_name: str = ""
     postgres_user: str = ""
     postgres_password: str = ""
     postgres_db: str = ""
@@ -20,7 +21,7 @@ class Settings(BaseSettings):
 
     rabbitmq_default_user: str = ""
     rabbitmq_default_pass: str = ""
-    
+
     client_id: str = ""
     client_secret: str = ""
     frontend_base_url: str = ""
@@ -28,7 +29,7 @@ class Settings(BaseSettings):
     frontend_oauth_redirect_url: str = ""
 
     class Config:
-        env_file = ".env"
+        env_file = ".devcontainer/.env"
 
 
 settings = Settings()

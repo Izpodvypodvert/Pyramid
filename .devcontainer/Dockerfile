@@ -6,9 +6,9 @@ RUN poetry config virtualenvs.create false
 
 WORKDIR /app
 
-COPY /backend/pyproject.toml /backend/poetry.lock* /app/
+COPY pyproject.toml poetry.lock* /app/
 
-RUN poetry install --no-dev --no-interaction --no-ansi
+RUN poetry install --without dev --no-interaction --no-ansi
 
 COPY . /app/
 

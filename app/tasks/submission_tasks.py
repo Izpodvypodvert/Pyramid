@@ -3,7 +3,7 @@ import uuid
 
 from subprocess import Popen, PIPE
 
-from .celery_app import celery_app, celery_logger
+from .celery_app import celery_app
 
 
 @celery_app.task
@@ -42,12 +42,13 @@ def run_code_in_docker(temp_filename: str) -> str:
     """
     Runs the specified code file in a Docker container and returns the output.
     """
+    project_name = os.getenv("PROJECT_NAME")
     command = [
         "docker",
         "run",
         "--rm",
         "-v",
-        "pyramid_shared_vol:/app",
+        f"{project_name}_shared_vol:/app",
         "python:3.12.1-alpine",
         "python",
         f"/app/{os.path.basename(temp_filename)}",
