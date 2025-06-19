@@ -1,15 +1,20 @@
 import functools
 import logging
+from pathlib import Path
 
 
-def setup_logger(name, log_file, level=logging.INFO):
+def setup_logger(name: str, log_file: str, level=logging.INFO):
     """Function to setup a logger with specified name and log file."""
+    logs_dir = Path("logs")
+    logs_dir.mkdir(exist_ok=True)
+    log_path = logs_dir / log_file
+
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
     # File handler which logs even debug messages
-    file_handler = logging.FileHandler(log_file)
+    file_handler = logging.FileHandler(log_path)
     file_handler.setFormatter(formatter)
     file_handler.setLevel(level)
 
@@ -28,22 +33,19 @@ def setup_logger(name, log_file, level=logging.INFO):
 
     return logger
 
-main_logger = setup_logger(
-    "main_logger", "logs/main_logger.log", level=logging.INFO
-)
+
+main_logger = setup_logger("main_logger", "main_logger.log", level=logging.INFO)
 
 
 services_logger = setup_logger(
-    "services_logger", "logs/services_logger.log", level=logging.WARNING
+    "services_logger", "services_logger.log", level=logging.WARNING
 )
 
 utils_repository_logger = setup_logger(
-    "utils_repository_logger", "logs/utils_repository_logger.log"
+    "utils_repository_logger", "utils_repository_logger.log"
 )
 
-oauth_logger = setup_logger(
-    "oauth_logger", "logs/oauth_logger.log"
-)
+oauth_logger = setup_logger("oauth_logger", "oauth_logger.log")
 
 
 def db_query_logger(logger=utils_repository_logger):

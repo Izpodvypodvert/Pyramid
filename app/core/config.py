@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     frontend_base_url: str = ""
     frontend_login_redirect_url: str = ""
     frontend_oauth_redirect_url: str = ""
-
+ 
     class Config:
         env_file = ".devcontainer/.env"
 

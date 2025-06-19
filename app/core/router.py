@@ -1,10 +1,17 @@
-from typing import Type
+from typing import Type, TypeVar
 
+from app.core.service import AbstractService
 from fastapi import APIRouter, HTTPException, status, Depends
 
 from app.users.auth_config import current_user
 from app.utils.exceptions import OpenAPIDocExtraResponse
 from app.users.models import User
+
+
+T = TypeVar("T")
+S = TypeVar("S", bound=AbstractService)
+G = TypeVar("G")
+V = TypeVar("V")
 
 
 class BaseRouter[T, S, G, V]:
@@ -53,7 +60,7 @@ class BaseRouter[T, S, G, V]:
         - DELETE /{item_id}: Delete an item by its ID.
         """
         @self.router.get("/", response_model=list[self.model])
-        async def get_items(service: self.service):
+        async def get_items(service: S = Depends(self.service)):
             return await service.get_all()
 
         @self.router.get("/{item_id}", response_model=self.model)
@@ -71,7 +78,7 @@ class BaseRouter[T, S, G, V]:
             item_id: int, item: self.model_update, service: self.service
         ):
             await service.update(item_id, item)
-            return {"message": f"Item has been successfully updated"}
+            return {"message": "Item has been successfully updated"}
 
         @self.router.delete(
             "/{item_id}",
@@ -131,7 +138,7 @@ class BaseRouterWithUser(BaseRouter):
             user: User = Depends(current_user),
         ):
             await service.update(item_id, item, user.id, user.is_superuser)
-            return {"message": f"Item has been successfully updated"}
+            return {"message": "Item has been successfully updated"}
 
         @self.router.delete(
             "/{item_id}",
@@ -164,4 +171,4 @@ class ParentItemRouterWithUser(BaseRouterWithUser):
         async def get_items_by_parent_id(
             parent_id: int, service: self.service, user: User = Depends(current_user)
         ):
-            return await service.get_all_by_id(user, parent_id)
+            return await service.get_all_by_id(user, parent_id) 
