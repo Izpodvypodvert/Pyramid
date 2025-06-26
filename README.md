@@ -36,15 +36,51 @@ Pyramid — это современная образовательная пла�
    git clone git@github.com:Izpodvypodvert/Pyramid.git
    ```
 
+## Зарегистрируйте своего поставщика OAuth
+
+- Go to the [Google API Console](https://console.cloud.google.com/apis).
+- Create a new project and configure OAuth credentials.
+- Set up your **Redirect URI** to point to your FastAPI callback endpoint, e.g., `http://localhost:8000/auth/google/callback`.
+- Copy your **Client ID** and **Client Secret**.
+
+## Переменные окружения
+
 2. Создайте `.env` файл с необходимыми переменными окружения.
+
+```bash
+# PostgreSQL configuration
+POSTGRES_USER=myuser
+POSTGRES_PASSWORD=mypassword
+POSTGRES_DB=mydatabase
+DATABASE_URL=postgresql+asyncpg://myuser:mypassword@localhost/mydatabase
+
+# JWT Secret key for authentication
+SECRET=your_jwt_secret_key
+CLIENT_ID=Client ID from provider
+CLIENT_SECRET=Client Secret from provider
+FRONTEND_BASE_URL=The base URL of your frontend application
+FRONTEND_LOGIN_REDIRECT_URL=Login URL of your frontend application
+FRONTEND_OAUTH_REDIRECT_URL=Defines the URL where the frontend application will redirect users after successful authentication through an OAuth provider
+
+# SMTP credentials
+EMAIL_ADDRESS=Your smtp email address
+EMAIL_PASSWORD=Your smtp email or app password
+SMTP_ADDRESS=smtp.gmail.com
+SMTP_PORT=587
+```
+
+## Запустите docker
 
 3. Запустите проект с помощью Docker Compose:
 
-   ```
-   docker-compose --env-file ./backend/.env up --build -d
-   ```
+- `docker compose up --build -d` – Build and start the containers.
 
-4. После запуска контейнеров api будет доступно на `http://localhost/docs`.
+## API Документация
+
+4. После запуска контейнеров api будет доступно на
+
+- [Swagger UI](http://127.0.0.1:8000/docs)
+- [Redoc](http://127.0.0.1:8000/redoc)
 
 ## TODO
 
