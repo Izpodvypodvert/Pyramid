@@ -23,7 +23,7 @@ async def auth_google_callback(
 ):
     try:
         user_info = await get_google_user_info(request, oauth_client)
-        user = await get_or_create_user(user_info, user_manager)
+        user = await get_or_create_user(user_info, user_manager, is_verified=True)
         access_token = await generate_access_token(user)
         redirect_url = f"{settings.frontend_oauth_redirect_url}?token={access_token}"
         return RedirectResponse(redirect_url)
