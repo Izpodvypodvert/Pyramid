@@ -27,9 +27,22 @@ class Settings(BaseSettings):
     frontend_base_url: str = ""
     frontend_login_redirect_url: str = ""
     frontend_oauth_redirect_url: str = ""
- 
+
+    email_address: str = ""
+    email_password: str = ""
+    smtp_address: str = ""
+    smtp_port: int = 587
+
     class Config:
         env_file = ".devcontainer/.env"
+
+    @property
+    def reset_password_url(self):
+        return f"{self.frontend_base_url}/reset-password?token"
+
+    @property
+    def verification_url(self):
+        return f"{self.frontend_base_url}/verify-email?token"
 
 
 settings = Settings()
